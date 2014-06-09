@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+
+[ -f ${HA_CONF}/ha_conf.ini ]  && . ${HA_CONF}/ha_conf.ini
+
+HA_MESSAGE=$(awk '{print}')
+
+ECHO_OK () {
+	echo -e "\033[0;32m${HA_MESSAGE}\033[0m" >> $HA_LOG/ha.$(date +%F).log
+	[ -z ${1} ] || echo -e '<span style="color:#000080;">'"${HA_MESSAGE}"'</span><br />' >> ${1}
+}
+ECHO_ERR () {
+	echo -e "\033[0;31m${HA_MESSAGE}\033[0m" >> $HA_LOG/ha.$(date +%F).log
+	[ -z ${1} ] || echo -e '<span style="color:#FF0000;">'"${HA_MESSAGE}"'</span><br />' >> ${1}
+}
+ECHO_DEBUG () {
+number_id=${1}
+	echo -e "$(date +'%F %H:%M:%S') $(hostname) ${2} ${number_id} ${3}" >> $HA_LOG/ha_debug.$(date +%F).log
+	printf "${HA_MESSAGE} \n"|sed "s/^/${number_id} ${3} /g" >> $HA_LOG/ha_debug.$(date +%F).log
+
+}
+
+check_send_message () {
+
+	[ "${2}" == "DISK" ] && {
+		[ ${1} == "OK" ] && ECHO_OK ${3}
+		[ ${1} == "ERR" ] && ECHO_ERR ${3}
+	}
+	[ "${2}" == "SENDMAIL" ] && {
+		[ ${1} == "OK" ] && ECHO_OK ${3}
+		[ ${1} == "ERR" ] && ECHO_ERR ${3}
+
+	}
+	[ "${2}" == "EYOU_MAIL" ] && {
+		[ ${1} == "OK" ] && ECHO_OK ${3}
+		[ ${1} == "ERR" ] && ECHO_ERR ${3}
+	}
+	[ "${2}" == "INIT" ] && {
+		[ ${1} == "OK" ] && ECHO_OK
+		[ ${1} == "ERR" ] && ECHO_ERR
+	}
+	[ ${1} == "DEBUG" ] && ECHO_DEBUG ${2} ${3} ${4}
+}
+
+[ $CHECK_SEND_MESSAGE -eq 0 ] && {
+check_send_message ${1} ${2} ${3} ${4}
+}
+exit 0

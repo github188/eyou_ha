@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+test_shell() {
+COROSYNC_ETC="/etc/corosync/corosync.conf"
+COROSYNC_LOGFILE=$(awk '{if($1 == "logfile:") {print $2}}' $COROSYNC_ETC)
+[ -f $COROSYNC_LOGFILE ] && {
+	mv $COROSYNC_LOGFILE ${COROSYNC_LOGFILE}.$(date --date='1 days ago' +%F)
+	find $(dirname $COROSYNC_LOGFILE) -type f -mtime +7 -exec rm -rf {} \;
+	}
+}
+

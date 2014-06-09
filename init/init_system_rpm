@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+[ -z "$(rpm -qa corosync)" ] && {
+        echo "$(hostname) corosync not install , pelease install expect.*.rpm "
+        exit 1
+        }
+[ -z "$(rpm -qa pacemaker)" ] && {
+        echo "$(hostname)  pacemaker not install , pelease install expect.*.rpm "
+        exit 1
+        }
+
+[ -x "/usr/bin/timeout" ] || {
+        echo "$(hostname) pacemaker not install , pelease install timeout.*.rpm "
+        exit 1
+        }
+
+
+#[ -x "/usr/bin/expect" ] || {
+#        echo "$(hostname) expect not install , pelease install expect.*.rpm "
+#        exit 1
+#        }

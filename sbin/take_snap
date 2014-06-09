@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+
+#判断配置文件是否存在 引入
+[ -f $HA_SBIN/check_master_slave ] && . $HA_SBIN/check_master_slave || exit 1
+
+#判断EYOU_TMP_CHECK_DIR EYOU_take_snap_dirname_CONF 是否存在并且已配置
+if [ $(grep "^EYOU_TMP_lgp_DIR=" $HA_CONFIG|wc -l) -eq "0" ];then
+	echo "$HA_CONFIG EYOU_TMP_lgp_DIR 未找到配置项";exit 122
+elif [ $(grep "^EYOU_take_snap_dirname=" $HA_CONFIG|wc -l) -eq "0" ];then
+	echo "$HA_CONFIG EYOU_take_snap_dirname 未找到配置项";exit 122
+elif [ $(echo $EYOU_TMP_lgp_DIR 2>/dev/null) == "" ];then
+	echo "$HA_CONFIG EYOU_TMP_lgp_DIR 未配置";exit 122
+elif [ $(echo $EYOU_take_snap_dirname 2>/dev/null) == "" ];then
+	echo "$HA_CONFIG EYOU_take_snap_dirname 未配置";exit 123
+else
+	[ -d $EYOU_take_snap_dirname_CONF ] || mkdir $EYOU_take_snap_dirname_CONF
+	wait
+fi
+
+#系统快照函数
+take_snap() {
+
+
+################################
+###  collect command output. ###
+################################
+
+
+# about process and jobs
+[ -x /bin/ps ] && {
+        /bin/ps -ef > ps-ef
+        /bin/ps aux > ps-aux
+        /bin/ps -eLf > ps-eLf
+}
+[ -x /usr/bin/ipcs ] && {
+        /usr/bin/ipcs -a > ipcs-a
+        /usr/bin/ipcs -u > ipcs-u
+        /usr/bin/ipcs -l > ipcs-l
+}
+[ -x /usr/bin/crontab ] && /usr/bin/crontab -l > crontab-l 2>&1
+[ -x /usr/bin/atq ] && /usr/bin/atq > atq
+
+
+# about performance
+[ -x /usr/bin/top ] && /usr/bin/top -b -n1 > top
+[ -x /usr/bin/vmstat ] && /usr/bin/vmstat 1 3 > vmstat
+if [ -x /usr/bin/iostat ]; then
+        /usr/bin/iostat 1 3 > iostat
+elif [ -x /usr/local/bin/iostat ]; then
+        /usr/local/bin/iostat 1 3 > iostat
+fi
+[ -x /usr/bin/free ] && /usr/bin/free -ltm > free-ltm
+
+
+# about online users
+[ -x /usr/bin/w ] &&  /usr/bin/w > w
+[ -x /usr/bin/who ] && /usr/bin/who > who
+[ -x /usr/bin/screen ] && /usr/bin/screen -ls > screen-ls
+
+
+# about env
+[ -x /bin/env ] && /bin/env > env
+# if type -all set >/dev/null 2>&1 ; then set > set ; fi
+
+
+# about disk and devices
+[ -x /sbin/fdisk ] && /sbin/fdisk -l > fdisk-l
+[ -x /bin/mount ] && /bin/mount > mount
+[ -x /bin/df ] && {
+        /bin/df -Thl > df-Thl
+        /bin/df -Til > df-Til
+}
+#[ -x /sbin/lspci ] && /sbin/lspci > lspci
+#[ -x /sbin/lsusb ] && /sbin/lsusb > lsusb
+
+
+# about network
+[ -x /sbin/iptables-save ] && /sbin/iptables-save > iptables-save
+[ -x /sbin/ifconfig ] && /sbin/ifconfig -a > ifconfig-a
+[ -x /sbin/route ] && /sbin/route -n > route-n
+[ -x /sbin/arp ] && /sbin/arp -n > arp-n
+[ -x /usr/sbin/ss ] && /usr/sbin/ss -a > ss-a
+#[ -f /proc/net/tcp ] && cat /proc/net/tcp > proc-tcp
+#[ -f /proc/net/udp ] && cat /proc/net/udp > proc-udp
+[ -x /bin/netstat ] && {
+        # /bin/netstat -an > netstat-an
+        /bin/netstat -tlnp > netstat-tlnp
+}
+service network status > network-status 2>&1
+ifdev=$(service network status 2>&- | awk '(/Configured devices:/){x=1;next} (x==1){print;exit}')
+for d in `echo "${ifdev}"`
+do
+        [ -x /sbin/ethtool ] && {
+                /sbin/ethtool "${d}"  > ethtool-"${d}" 2>&1
+                /sbin/ethtool -i "${d}" > ethtool-i-"${d}" 2>&1
+        }   
+        [ -x /sbin/mii-tool ] && {
+                /sbin/mii-tool "${d}" > mii-tool-"${d}" 2>&1
+        }
+done
+
+
+[ -x /sbin/sysctl ] && /sbin/sysctl -A > sysctl-A
+
+
+# about dmesg
+[ -x /bin/dmesg ] && /bin/dmesg > dmesg
+
+
+# about library
+[ -x /sbin/lsmod ] && /sbin/lsmod > lsmod
+[ -x /sbin/ldconfig ] && /sbin/ldconfig -p > ldconfig-p
+
+
+# about release and dmidecode
+[ -x /usr/bin/lsb_release ] && /usr/bin/lsb_release -a > lsb_release-a
+[ -x /usr/sbin/dmidecode ] && /usr/sbin/dmidecode > dmidecode
+[ -x /bin/uname ] && /bin/uname -a > uname-a
+
+
+# about securety
+[ -x /usr/bin/last ] &&  /usr/bin/last > last
+[ -x /usr/bin/lastlog ] && /usr/bin/lastlog > lastlog
+[ -x /usr/bin/md5sum ] && {
+        /usr/bin/md5sum /usr/bin/dir /bin/ls /bin/ps /usr/sbin/lsof /usr/bin/md5sum /usr/bin/tty /bin/login /usr/sbin/sshd /usr/bin/passwd /usr/sbin/tcpd /usr/bin/du /usr/bin/find /bin/kill /usr/bin/killall /usr/bin/crontab /usr/bin/top /bin/netstat /sbin/ifconfig /sbin/ip /sbin/syslogd /sbin/route  > md5sum 2>&-
+}
+
+
+
+
+#######################
+###  collect files  ###
+#######################
+
+
+
+
+# system config files.
+[ -f /etc/issue.net ] && cat /etc/issue.net  > issue.net.etc
+[ -f /etc/issue ] && cat  /etc/issue > issue.etc
+[ -f /etc/redhat-release ] && cat /etc/redhat-release > redhat-release.etc
+[ -f /etc/rc.local ] && cat  /etc/rc.local  > rc.local
+[ -f /etc/passwd ] && cat /etc/passwd  > passwd.etc
+[ -f /etc/shadow ] && cat /etc/shadow > shadow.etc
+[ -f /etc/modprobe.conf ] && cat /etc/modprobe.conf > modprobe.conf.etc
+[ -f /etc/modules.conf ] && cat /etc/modules.conf > modules.conf.etc
+[ -f /etc/sysctl.conf ] && cat /etc/sysctl.conf > sysctl.conf.etc
+[ -f /etc/bashrc ] && cat /etc/bashrc > bashrc.etc
+[ -f /etc/profile ] && cat /etc/profile > profile.etc
+# [ -f /etc/rc.sysinit ] && cat /etc/rc.sysinit > rc.sysinit.etc
+[ -f /etc/crontab ] && cat /etc/crontab > crontab.etc
+[ -f /etc/mtab ] && cat /etc/mtab > mtab.etc
+[ -f /etc/exports ] && cat /etc/exports > exports.etc
+ls /etc/cron.{hourly,daily,weekly,monthly} > cron.list
+# [ -f /etc/init.d/functions ] && cat /etc/init.d/functions > functions.etc.init.d
+
+
+# system log files.
+[ -f /var/log/messages ] && tail -n 200 /var/log/messages > messages.var.log
+[ -f /var/log/spooler ] && tail -n 200 /var/log/spooler > spooler.var.log
+[ -f /var/log/secure ] && tail -n 200 /var/log/secure > secure.var.log
+[ -f /var/log/cron ] && tail -n 200 /var/log/cron > cron.var.log
+[ -f /var/log/yum.log ] && tail -n 200 /var/log/yum.log > yumlog.var.log
+[ -f /var/log/maillog ] && tail -n 200 /var/log/maillog > maillog.var.log
+
+
+# system /proc files.
+ls -d /proc/[0-9]*  > proc-psdir
+[ -f /proc/loadavg ] && cat /proc/loadavg  > proc-loadavg
+[ -f /proc/cpuinfo ] && cat /proc/cpuinfo > proc-cpuinfo
+[ -f /proc/meminfo ] && cat /proc/meminfo > proc-meminfo
+[ -f /proc/vmstat ] && cat /proc/vmstat > proc-vmstat
+[ -f /proc/uptime ] && cat /proc/uptime > proc-uptime
+[ -f /proc/modules ] && cat /proc/modules > proc-modules
+[ -f /proc/version ] && cat /proc/version > proc-version
+[ -f /proc/stat ] && cat /proc/stat > proc-stat
+#[ -f /proc/diskstats ] && /proc/diskstats > proc-diskstats
+
+
+# eyou log files.
+[ -f /var/eyou/log/maillog ] && tail -n 200 /var/eyou/log/maillog > mailv4.maillog
+[ -f /var/emdg/log/maillog ] && tail -n 200 /var/emdg/log/maillog > emdg.maillog
+[ -f /usr/local/eyou/mail/log/init.out ] && tail -n 200 /usr/local/eyou/mail/log/init.out > mailv5.init.out
+[ -f /usr/local/eyou/mail/log/default.log ] && tail -n 200 /usr/local/eyou/mail/log/default.log > mailv5.default.log
+[ -f /usr/local/eyou/mail/log/mta.log ] && tail -n 200 /usr/local/eyou/mail/log/mta.log  > mailv5.mta.log
+[ -f /usr/local/eyou/mail/log/phpd.log ] && tail -n 200 /usr/local/eyou/mail/log/phpd.log > mailv5.phpd.log
+[ -f /usr/local/eyou/mail/log/innerapi.log ] && tail -n 200 /usr/local/eyou/mail/log/innerapi.log > mailv5.innerapi.log
+[ -f /var/eyou/mysql/var/$(hostname).err ] && tail -n 200 /var/eyou/mysql/var/$(hostname).err > mailv4.mysql.err
+[ -f /usr/local/eyou/mail/data/mysql/$(hostname).err ] && tail -n 200 /usr/local/eyou/mail/data/mysql/$(hostname).err > mailv5.mysql.err
+
+
+#ha status
+crm status > crm.status
+[ -x /bin/ping ] && ping $(route -n|awk '{print $2}'|grep '[1-9]\{1,3\}\.[0-9]\{1,3\}') -c 4 > ping-c4-route
+
+
+
+### be careful
+#[ -x /usr/local/eyou/mail/app/bin/em_mailq ] && /usr/local/eyou/mail/app/bin/em_mailq -qa > v5_em_mailq.list
+#[ -x /var/eyou/queue/bin/mailq ] && /var/eyou/queue/bin/mailq -qa > v4_mailq.list
+
+
+}
+
+cd $EYOU_take_snap_dirname_CONF
+take_snap
+cd $EYOU_TMP_CHECK_DIR
+zip -r ${EYOU_take_snap_dirname_CONF}_$(hostname)_$(date +%s).$1.zip $EYOU_take_snap_dirname >/dev/null 2>&1
+rm -rf $EYOU_take_snap_dirname_CONF

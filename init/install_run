@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+#by liguopeng@eyou.net
+
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+HA_INIT="$HA_DIR/init"
+
+SYSTEM=$(cat /etc/issue|grep -Ei 'redhat|centos' |grep -o [0-9]\.[0-9])
+
+[ -f "$HA_SBIN/check_master_slave" ] && . $HA_SBIN/check_master_slave || {
+                echo "$DATE_MESS $(hostname) 检测 $HA_SBIN/check_master_slave 不存在。"|$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+                exit 121
+        }
+for i in $EMAIL_SER_N
+	do
+	[ -z $(ip a|grep -o ${i}'/') ] && EMAIL_SER_NOT_MY="$i" || EMAIL_SER_MY="$i"
+done
+
+[ -z ${EMAIL_SER_MY} ] && {
+	echo "$DATE_MESS $(hostname) 检测 EMAIL_SER_N 参数中配置的地址不存在。"
+
+	}
+
+nc -v4 -z -w 10 $EMAIL_SER_NOT_MY $SSH_PORT
+[ $? -eq 0 ] || {
+	echo "$DATE_MESS $(hostname) 检测 $EMAIL_SER_NOT_MY $SSH_PORT 端口失败，请检测。"
+	exit 1
+	}
+
+#HA_SSH_ENV="$HA_SBIN/eyou_ssh_expect $EMAIL_SER_NOT_MY $SSH_PORT"
+HA_SSH_ENV="/usr/bin/ssh $EMAIL_SER_NOT_MY -p $SSH_PORT env "
+
+$HA_INIT/init_system_rpm
+[ $? -ne 0 ] && exit 1
+$HA_SSH_ENV "$HA_INIT/init_system_rpm"
+[ $? -ne 0 ] && exit 1
+
+eyou_check_disk_time=".eyou_check_disk_time_$RANDOM"
+
+sed -i "s/.eyou_check_disk_time/$eyou_check_disk_time/g" $HA_CONF/ha_conf.ini
+$HA_SSH_ENV "sed -i "s/.eyou_check_disk_time/$eyou_check_disk_time/g" $HA_CONF/ha_conf.ini"
+
+
+[ $($HA_SSH_ENV "ip a"|grep -o $EMAIL_SER_NOT_MY|wc -l) -eq 0 ] && {
+	echo "$DATE_MESS $(hostname) 检测 $EMAIL_SER_NOT_MY SSH 失败 请检测。"
+	}
+
+echo "$DATE_MESS $(hostname) 检测 corosync 配置文件 ,不存在则 创建。。。"
+[ -f /etc/corosync/corosync.conf ] || COROCONF="1"
+[ -f /etc/corosync/corosync.conf.example ] || {
+	echo "/etc/corosync/corosync.conf.example 模板文件不存在，请手工创建corosync 配置文件。"
+	exit 1
+	}
+if [ ! -z $COROCONF ];then
+	cp -arf /etc/corosync/corosync.conf.example /etc/corosync/corosync.conf
+	sed -i "s/192.168.1.1/$EMAIL_SER_MY/g" /etc/corosync/corosync.conf
+	sed -i "s/5405/$(echo $RANDOM*2312%9999|bc)/g" /etc/corosync/corosync.conf
+	sed -i 's/\/var/\/usr\/local\/eyou\/mail/g' /etc/corosync/corosync.conf
+	sed -i 's/debug: on/debug: off/g' /etc/corosync/corosync.conf
+	sed -i 's/to_logfile: yes/to_logfile: no/g' /etc/corosync/corosync.conf
+	sed -i 's/to_syslog: yes/to_syslog: no/g' /etc/corosync/corosync.conf
+	[[ $SYSTEM =~ 5 ]] && {
+	echo '
+service {
+ver: 0
+name: pacemaker
+}
+
+aisexec {
+user: root
+group: root
+}
+' >> /etc/corosync/corosync.conf
+	}
+	[[ $SYSTEM =~ 6 ]] && {
+	echo '
+service {
+ver: 1
+name: pacemaker
+}
+
+aisexec {
+user: root
+group: root
+}
+' >> /etc/corosync/corosync.conf
+	}
+fi
+	
+
+echo "$DATE_MESS $(hostname) 检测 corosync-keygen ,不存在则 创建，创建时间较长，请耐心等待。。。"
+[ -f /etc/corosync/authkey ] || corosync-keygen
+wait
+scp /etc/corosync/corosync.conf /etc/corosync/authkey $EMAIL_SER_NOT_MY:/etc/corosync/
+wait
+[ -d /usr/local/eyou/mail/log/cluster ] || mkdir /usr/local/eyou/mail/log/cluster
+$HA_SSH_ENV "[ -d /usr/local/eyou/mail/log/cluster ] || mkdir /usr/local/eyou/mail/log/cluster"
+
+[[ $SYSTEM =~ 5 ]] && {
+/etc/init.d/corosync start
+exit_val=$?
+}
+[[ $SYSTEM =~ 6 ]] && {
+/etc/init.d/corosync start && /etc/init.d/pacemaker start
+exit_val=$?
+}
+[ $exit_val -eq 0 ] || {
+	echo "本机 /etc/init.d/corosync start && /etc/init.d/pacemaker start 启动失败，请检查。"
+	exit 1
+	}
+wait
+[[ $SYSTEM =~ 5 ]] && {
+$HA_SSH_ENV "/etc/init.d/corosync start"
+exit_val=$?
+}
+[[ $SYSTEM =~ 6 ]] && {
+$HA_SSH_ENV "/etc/init.d/corosync start && /etc/init.d/pacemaker start"
+exit_val=$?
+}
+[ $exit_val -eq 0 ] || {
+	echo "HA对端机器 /etc/init.d/corosync start && /etc/init.d/pacemaker start 启动失败，请检查。"
+	exit 1
+	}
+wait
+	echo "等待30S 以便HA pacemaker 初始化状态同步，请稍等。"
+	sleep 30;wait;
+
+MY_NODE_NUMBER=$(crm status|grep Node|cut -d ' ' -f1)
+YOU_NODE_NUMBER=$($HA_SSH_ENV "crm status|grep Node|cut -d ' ' -f1")
+
+[ "$MY_NODE_NUMBER" == "$YOU_NODE_NUMBER" ] || {
+	echo "crm status|grep Node 节点数不一致，请检测。"
+	eixt 1
+	}
+
+echo "正在 生成crm 配置文件。。"
+$HA_INIT/init_create_crmsh
+echo "初始化本机 HA 需要的程序。。"
+$HA_INIT/init_create_eyou_shell
+[ $? -eq 0 ] && {
+	$HA_SBIN/init_eyou_pid
+	}
+[ $? -eq 0 ] || {
+	echo "初始化本机 HA 需要的程序 失败，请排查。。"
+	exit 1
+	}
+echo "初始化对端机器 HA 需要的程序。。"
+$HA_SSH_ENV "$HA_INIT/init_create_eyou_shell"
+[ $? -eq 0 ] && {
+	$HA_SSH_ENV "$HA_SBIN/init_eyou_pid"
+	}
+[ $? -eq 0 ] || {
+	echo "初始化对段机器 HA 需要的程序 失败，请排查。。"
+	exit 1
+	}
+
+echo "停止HA对端机器，避免配置HA 过程中资源的不正确启动。"
+[[ $SYSTEM =~ 5 ]] && {
+	$HA_SSH_ENV "/etc/init.d/corosync stop"
+	}
+[[ $SYSTEM =~ 6 ]] && {
+	$HA_SSH_ENV "/etc/init.d/pacemaker stop && /etc/init.d/corosync stop"
+	}
+
+echo "初始化HA 配置开始。。。"
+sh -x $HA_TEMP/crmsh
+
+echo "初始化HA 配置完成～  相关服务正在启动，进行HA 最后配置"
+[ -x /etc/init.d/corosync ] && chkconfig corosync on
+[ -x /etc/init.d/pacemaker ] && chkconfig pacemaker on
+[ -x /etc/init.d/eyou_mail ] && chkconfig eyou_mail off
+[ -x /etc/init.d/gw_init ] && chkconfig gw_init off
+$HA_SSH_ENV "[ -x /etc/init.d/corosync ] && chkconfig corosync on"
+$HA_SSH_ENV "[ -x /etc/init.d/pacemaker ] && chkconfig pacemaker on"
+$HA_SSH_ENV "[ -x /etc/init.d/eyou_mail ] && chkconfig eyou_mail off"
+$HA_SSH_ENV "[ -x /etc/init.d/gw_init ] && chkconfig gw_init off"
+echo "HA 开机自动化已配置完成。"
+
+echo "启动HA 对段机器。" 
+[[ $SYSTEM =~ 5 ]] && {
+	$HA_SSH_ENV "/etc/init.d/corosync start"
+	}
+[[ $SYSTEM =~ 6 ]] && {
+	$HA_SSH_ENV "/etc/init.d/pacemaker start && /etc/init.d/corosync start"
+	}
+
+	echo "等待30S 以便HA pacemaker 将配置状态同步，请稍等。"
+	sleep 30;wait;
+
+MY_RESOURCE_NUMBER=$(crm status|grep Resources|cut -d ' ' -f1)
+YOU_RESOURCE_NUMBER=$($HA_SSH_ENV "crm status|grep Resources|cut -d ' ' -f1 ")
+
+[ $MY_RESOURCE_NUMBER -eq $YOU_RESOURCE_NUMBER ] && {
+	echo "配置完成，启动程序开始～。" 
+		} || {
+	echo "配置完成，但主备两端资源数量 不正常，请排查。"
+	}
+
+crm configure rsc_defaults target-role=Started
+
+

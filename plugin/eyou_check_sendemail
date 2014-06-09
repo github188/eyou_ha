@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+# by liguopeng	email:liguopeng@eyou.net
+# zh_CN.UTF-8
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+SENDMAIL="$HA_SBIN/sendEmail"
+#引入配置文件
+[ -f $HA_SBIN/check_master_slave ] && . $HA_SBIN/check_master_slave || exit 1
+
+pid_name="$(basename $0).pid"
+
+#检测crm 是否OK
+check_crm () {
+if crm status >/dev/null 2>&1 ;then
+	:
+else
+	[ "$1" != "stop" ] && exit 1 || exit 0
+fi
+}
+sendmail() {
+
+if [ "$send_mail_check" == "start" ];then
+	if [ -f $SEND_EMAILFILE_CONF ];then
+		$SENDMAIL -f $FROM -t $TO -s $EMAIL_SERVER -u "[$EMAIL_SJ] $SUBJECT" -xu $FROM -xp $FROM_PASS -o message-charset=utf-8 -o message-file="$SEND_EMAILFILE_CONF" -o message-content-type=html -a $ha_status_master_slave.zip >/dev/null 2>&1
+		exit_val=$?
+		if [ $exit_val -eq 0 ];then
+			echo "$(date '+%F %H:%M:%S') $(hostname) 邮件发送成功。"  | $HA_MESSAGE OK SENDMAIL 
+		else
+			echo "$(date '+%F %H:%M:%S') $(hostname) 邮件发送失败。" | $HA_MESSAGE ERR SENDMAIL
+		fi
+	else
+		exit_val=1
+	fi
+fi
+if [ "$send_mail_check" == "status" ];then
+	if [ -f $SEND_EMAILFILE_CONF ];then
+		$SENDMAIL -f $FROM -t $TO -s $EMAIL_SERVER -u "[$EMAIL_SJ] $SUBJECT" -xu $FROM -xp $FROM_PASS -o message-charset=utf-8 -o message-file="$SEND_EMAILFILE_CONF" -o message-content-type=html >/dev/null 2>&1
+		exit_val=$?
+		if [ $exit_val -eq 0 ];then
+			echo "$(date '+%F %H:%M:%S') $(hostname) 邮件发送成功。"  | $HA_MESSAGE OK SENDMAIL 
+		else
+			echo "$(date '+%F %H:%M:%S') $(hostname) 邮件发送失败。" | $HA_MESSAGE ERR SENDMAIL
+		fi
+	else
+		exit_val=1
+	fi
+fi
+rm -rf $SEND_EMAILFILE_CONF
+}
+send_email_start () {
+echo -e "
+客户名称：[ $EMAIL_SJ ] <br />
+<br />
+服务已变更 <br />
+<br />
+当前时间: $(date +'%F %H:%M:%S') <br />
+<br />
+当前所在服务器角色以及主机名: <span style='color:#FF0000;'> ${ha_status_master_slave}</span><br />
+<br />
+邮件系统服务在 <span style='color:#FF0000;'>$(crm resource status eyou_mail_vip|awk -F: '{print $2}')</span> 运行 <br />
+<br />
+温馨提示： <br />
+	$MESSAGE <br />
+<br />
+######################### <br />
+以下信息提供与工程师解读 <br />
+######################### <br />
+<br />
+<br />
+" >> $SEND_EMAILFILE_CONF
+}
+
+#在主机上检测是否有节点offline online 状态变更
+crm_master_start_slave () {
+if [ "$ha_status_master_slave" == "Master_$(hostname)" ];then
+node_list_all=$(crm node list 2>/dev/null)
+node_list=$(echo -e "$node_list_all"|awk -F ':' '{print $1}')
+check_server=$(crm resource status $EYOU_NETWORK_CHECK|awk -F ': ' '{print $2}')
+for i in $node_list
+	do
+	node_list_me_offline=$(echo -e "$node_list_all"|awk '{if ($1 == "'${i}:'") {print $2}}' |grep -io offline|wc -l)
+if [ "$i" == "$(hostname)" ];then
+		:
+else
+	if [ "$node_list_me_offline" == "0" ] && [ ! -f ${CHECK_NODE_START_CONF}.${i}.sucess ];then
+#		echo "$(date +'%F %H:%M:%S') $i 节点启动成功...	" >> ${CHECK_NODE_START_CONF}.${i}
+		echo "$(date +'%F %H:%M:%S') $i 节点启动成功...	" | $HA_MESSAGE OK SENDMAIL ${CHECK_NODE_START_CONF}.${i}
+		[ -f ${CHECK_NODE_START_EMAIL_CONF}.${i}.sucess ] && rm -rf ${CHECK_NODE_START_EMAIL_CONF}.${i}.sucess
+	fi
+
+	if [ "$node_list_me_offline" == "1" ] && [ ! -f ${CHECK_NODE_START_EMAIL_CONF}.${i}.sucess ];then
+#		echo "$(date +'%F %H:%M:%S') $i 节点未启动...请排查节点故障	" >> ${CHECK_NODE_START_EMAIL_CONF}.${i}
+		echo "$(date +'%F %H:%M:%S') $i 节点未启动...请排查节点故障	" |$HA_MESSAGE ERR SENDMAIL ${CHECK_NODE_START_EMAIL_CONF}.${i}
+		[ -f ${CHECK_NODE_START_CONF}.${i}.sucess ] && rm -rf ${CHECK_NODE_START_CONF}.${i}.sucess
+	fi
+fi
+
+if [ "$i" == "$(hostname)" ];then
+                :
+else
+        if [ "$(echo -e "${check_server}" |awk '{if($1 == "'$i'"){print $1}}'|wc -l)" == "1" ] && [ ! -f ${CHECK_NODE_NETWORK_CONF}.${i}.sucess ];then
+#                echo "$(date +'%F %H:%M:%S') $i 节点，网络恢复..  " >> ${CHECK_NODE_NETWORK_CONF}.${i}
+                echo "$(date +'%F %H:%M:%S') $i 节点，网络恢复..  " |$HA_MESSAGE OK SENDMAIL ${CHECK_NODE_NETWORK_CONF}.${i}
+		[ -f ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i}.sucess ] && rm -rf $CHECK_NODE_NETWORK_EMAIL_CONF.${i}.sucess
+	fi
+
+        if [ "$(echo -e "${check_server}" |awk '{if($1 == "'$i'"){print $1}}'|wc -l)" == "0" ] && [ ! -f ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i}.sucess ];then
+#                echo "$(date +'%F %H:%M:%S') $i 节点，网络故障，请排查  " >> ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i}
+                echo "$(date +'%F %H:%M:%S') $i 节点，网络故障，请排查  " |$HA_MESSAGE ERR SENDMAIL ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i}
+		[ -f ${CHECK_NODE_NETWORK_CONF}.${i}.sucess ] && rm -rf ${CHECK_NODE_NETWORK_CONF}.${i}.sucess
+        fi
+fi
+done
+
+fi
+}
+#在主机上检测是否有节点网络故障～需要一个中间性clone脚本支持 禁用～ 已经变为统一～ crm_master_start_slave
+crm_master_status_slave () {
+node_list_all=$(crm node list 2>/dev/null)
+node_list=$(echo -e "$node_list_all"|awk -F ':' '{print $1}')
+check_server=$(crm resource status $EYOU_NETWORK_CHECK|awk -F ':' '{print $2}')
+for i in $node_list
+	do
+if [ "$i" == "$hostname" ];then
+		:
+else
+	if [ "$(echo -e "${check_server}" |grep ' "$i" '|wc -l)" == "1" ] && [ -f ${CHECK_STARTFILE_CONF}.${i}.sucess ];then
+#		echo "$(date +%F %H:%M:%S) $i 节点，网络恢复..  " >> ${CHECK_STARTFILE_CONF}.${i}
+		echo "$(date +%F %H:%M:%S) $i 节点，网络恢复..  " |$HA_MESSAGE OK SENDMAIL ${CHECK_STARTFILE_CONF}.${i}
+	fi
+	if [ "$(echo -e "${check_server}" |grep ' "$i" '|wc -l)" == "0" ] && [ ! -f ${CHECK_STARTFILE_CONF}.${i}.sucess ];then
+#		echo "$(date +%F %H:%M:%S) $i 节点，网络故障，请排查  " >> ${CHECK_STARTFILE_CONF}.${i}
+		echo "$(date +%F %H:%M:%S) $i 节点，网络故障，请排查  " |$HA_MESSAGE ERR SENDMAIL ${CHECK_STARTFILE_CONF}.${i}
+	fi
+fi
+done
+
+}
+master_slave_zip () {
+cd ${EYOU_TMP_lgp_DIR}
+zip -r $ha_status_master_slave.zip Slave_* Master_* test >/dev/null 2>&1
+}
+
+start_check () {
+#判断为Master执行到动作
+if [ "$(find $EYOU_TMP_lgp_DIR/[Master,Slave]* -type f -name "$(basename ${CHECK_DISK_SCAN_CONF})" -o -name "$(basename ${EYOU_SER_FILE_CONF})"|wc -l)" != "0" ];then
+	send_email_start
+	[ -f $CHECK_DISK_SCAN_CONF ] && cat $CHECK_DISK_SCAN_CONF >> $SEND_EMAILFILE_CONF
+	[ -f $(echo $CHECK_DISK_SCAN_CONF|sed 's/Master_/Slave_/g') ] && cat $(echo $CHECK_DISK_SCAN_CONF|sed 's/Master_/Slave_/g') >> $SEND_EMAILFILE_CONF
+	[ -f "$EYOU_SER_FILE_CONF" ] && cat "$EYOU_SER_FILE_CONF" >> $SEND_EMAILFILE_CONF
+	master_slave_zip
+	send_mail_check=start
+	sendmail
+	find $EYOU_TMP_lgp_DIR/[Master,Slave]* -type f ! -name *.sucess -exec rm -rf {} \;
+fi
+	
+}
+status_check () {
+if [ "$ha_status_master_slave" == "Master_$(hostname)" ];then
+	if [ "$(find $EYOU_TMP_lgp_DIR/[Master,Slave]* -type f -name "$(basename ${CHECK_NODE_START_CONF})*" -o -name "$(basename ${CHECK_NODE_START_EMAIL_CONF})*" -o -name "$(basename ${CHECK_NODE_NETWORK_CONF})*" -o -name "$(basename ${CHECK_NODE_NETWORK_EMAIL_CONF})*"|grep -v '.sucess'|wc -l)" != "0" ];then
+		send_email_start
+	for i in $node_list
+		do
+		[ -f ${CHECK_NODE_START_CONF}.${i} ] && cat ${CHECK_NODE_START_CONF}.${i} >>$SEND_EMAILFILE_CONF
+		[ -f ${CHECK_NODE_START_CONF}.${i} ] && mv ${CHECK_NODE_START_CONF}.${i} ${CHECK_NODE_START_CONF}.${i}.sucess
+		[ -f ${CHECK_NODE_START_EMAIL_CONF}.${i} ] && cat ${CHECK_NODE_START_EMAIL_CONF}.${i} >>$SEND_EMAILFILE_CONF
+		[ -f ${CHECK_NODE_START_EMAIL_CONF}.${i} ] && mv ${CHECK_NODE_START_EMAIL_CONF}.${i} ${CHECK_NODE_START_EMAIL_CONF}.${i}.sucess
+		[ -f ${CHECK_NODE_NETWORK_CONF}.${i} ] && cat ${CHECK_NODE_NETWORK_CONF}.${i} >>$SEND_EMAILFILE_CONF
+		[ -f ${CHECK_NODE_NETWORK_CONF}.${i} ] && mv ${CHECK_NODE_NETWORK_CONF}.${i} ${CHECK_NODE_NETWORK_CONF}.${i}.sucess
+		[ -f ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i} ] && cat ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i} >>$SEND_EMAILFILE_CONF
+		[ -f ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i} ] && mv ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i} ${CHECK_NODE_NETWORK_EMAIL_CONF}.${i}.sucess
+	sleep 1
+	done
+	[ -f $CHECK_DISK_SCAN_CONF ] && cat $CHECK_DISK_SCAN_CONF >>$SEND_EMAILFILE_CONF
+	[ -f $CHECK_DISK_SCAN_CONF ] && rm -rf $CHECK_DISK_SCAN_CONF
+	send_mail_check=status
+	sendmail
+	fi
+
+fi
+
+
+
+}
+
+
+
+
+
+case $1 in
+	start)
+#		check_crm
+		start_check
+		touch $SENDMAIL_PID_FILE/$pid_name
+		exit 0
+	;;
+	stop)
+		rm -rf $SENDMAIL_PID_FILE/$pid_name
+#		check_crm $1
+	;;
+	status)
+		[ -f $SENDMAIL_PID_FILE/$pid_name ] || exit 1	
+#		check_crm
+		crm_master_start_slave
+		status_check
+		exit 0
+	;;
+	*)
+		echo "Usage: $0 {start|stop|status}";exit 1
+	;;
+esac

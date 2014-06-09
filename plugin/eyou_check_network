@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# by liguopeng	email: liguopeng@eyou.net
+
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+
+#引入配置文件
+[ -f $HA_SBIN/check_master_slave ] && . $HA_SBIN/check_master_slave || exit 1
+
+pid_name="$(basename $0).pid"
+
+
+case $1 in
+	start)
+		touch $HA_RUN/$pid_name
+		exit 0;
+	;;
+	stop)
+		rm -rf $HA_RUN/$pid_name
+		exit 0;
+	;;
+	status)
+		[ -f $HA_RUN/$pid_name ] && exit 0 || exit 1
+	;;
+	*)
+		echo "$0 为中间件程序 "
+esac

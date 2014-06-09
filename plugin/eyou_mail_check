@@ -1,0 +1,355 @@
+#!/usr/bin/env bash
+# by liguopeng	email:liguopeng@eyou.net
+
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+#EYOU_MAIL="$HA_SBIN/eyou_mail"
+EYOU_MAIL="/usr/local/eyou/mail/app/sbin/eyou_mail"
+DATE_MESS=$(date +'%F %H:%M:%S')
+DEBUG_ID=$(echo $RANDOM*99999%4235|bc)
+
+
+[ -f $HA_SBIN/check_master_slave ] && . $HA_SBIN/check_master_slave || {
+		echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 检测 $HA_SBIN/check_master_slave 不存在。"|$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+		exit 121
+	}
+[ -x $EYOU_MAIL ] && : || {
+#		echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 检测 $EYOU_MAIL 不存在或无执行权限。"|$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+#		exit 122
+	[ -x /usr/local/eyou/mail/sbin/eyou_mail ] && EYOU_MAIL="/usr/local/eyou/mail/sbin/eyou_mail"
+	}
+[ -x $HA_SBIN/init_eyou_pid ] && $HA_SBIN/init_eyou_pid || {
+		echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 检测 $HA_SBIN/init_eyou_pid 不存在或无执行权限。" | $HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+		 exit 123
+	}
+
+[ -f $HA_TEMP/HA_WATCH.ini ] && . $HA_TEMP/HA_WATCH.ini || {
+		echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 检测 $HA_$HA_TEMP/HA_WATCH.ini 不存在或无执行权限。" | $HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+		 exit 123
+	}
+while [ -z $HA_EYOU_DEBUG ];do . $HA_TEMP/HA_WATCH.ini ;done
+
+wait
+
+
+EYOU_SYS_NAME=$(echo $BASENAME|sed 's/eyou_mail_//g')
+
+EYOU_SYS_PIDF=$(echo pidf_${EYOU_SYS_NAME}|tr [a-z] [A-Z])
+[ "$EYOU_SYS_PIDF" == "PIDF_CRON_ETC" ] && EYOU_SYS_PIDF="PATH_EM_CROND"
+EYOU_SYS_PID_FILE=$(awk -F '=' '{if($1 == "'$EYOU_SYS_PIDF'") {print $2}}' $HA_TEMP/eyou_mail_pid)
+[ -z $EYOU_SYS_PID_FILE ] && {
+	echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 相关程序不存在 请检测 [ ERROR ]" |$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+	exit 1
+}
+
+eyou_start () {
+	start_number=1
+	$EYOU_MAIL start $EYOU_SYS_NAME >>/dev/null 2>&1
+	wait;
+	$EYOU_MAIL watch $EYOU_SYS_NAME >>/dev/null 2>&1
+	eyou_start_num=${?}
+	wait;
+	while [ $eyou_start_num -ne 0 ];do [ ${start_number} -eq 5 ] && break; $EYOU_MAIL start $EYOU_SYS_NAME >>/dev/null 2>&1 ;wait;$EYOU_MAIL watch $EYOU_SYS_NAME >>/dev/null 2>&1; eyou_start_num=${?} ;wait;start_number=$(echo ${start_number}+1|bc);done
+	if [ $HA_EYOU_DEBUG -eq 0 ];then
+		:
+	elif [ $HA_EYOU_DEBUG -eq 1 ];then
+	$EYOU_MAIL watch $EYOU_SYS_NAME | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME start
+	fi
+#	exit_val=$?
+#	while [ "$exit_val" == "" ];do $EYOU_MAIL start $EYOU_SYS_NAME >>/dev/null 2>&1;exit_val=$?;done
+	wait;
+	eyou_status start
+	wait;
+	if [ "$exit_val" == "0" ];then
+	echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME start [ 启动成功 ] [ OK ] DEBUG_ID: [ $DEBUG_ID ]" |$HA_MESSAGE OK EYOU_MAIL $EYOU_SER_FILE_CONF
+	touch $HA_RUN/eyou_${EYOU_SYS_NAME}.pid
+	exit_val=0
+	wait
+	else
+	echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME start [ 启动失败 ] [ ERROR ] DEBUG_ID: [ $DEBUG_ID ]" |$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+	exit_val=1
+	wait
+	fi
+	
+}
+
+eyou_status () {
+	[ -f $EYOU_SYS_PID_FILE ] && exit_val=0 || {
+		[ -z $1 ] && {
+		echo "$DATE_MESS $(hostname) 未找到PID 文件 [ $EYOU_SYS_NAME ]" |$HA_MESSAGE ERR EYOU_MAIL ${EYOU_SER_FILE_CONF} 
+		exit 1
+			} || {
+			[ $HA_EYOU_DEBUG -eq 1 ] && {
+				echo "未找到PID 文件 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+				}
+			exit_val=1
+			}
+		}
+
+
+	if [ "$EYOU_SYS_NAME" != "cron_etc" ] && [ $exit_val -eq 0 ];then
+	pid_number=$(sed -n '1p' $EYOU_SYS_PID_FILE)
+	wait
+	[ -z $pid_number ] && {
+		[ -z $1 ] && {
+		echo "$DATE_MESS $(hostname) 未读取到进程的 PID [ $EYOU_SYS_NAME ]" |$HA_MESSAGE ERR EYOU_MAIL ${EYOU_SER_FILE_CONF} 
+		exit 1
+			} || {
+			[ $HA_EYOU_DEBUG -eq 1 ] && {
+				echo "未读取到进程的 PID [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+					}
+			exit_val=1
+			}
+		}
+#start_1
+	[ $exit_val -eq 0 ] && {
+		pid_pstree_name=$(pstree $pid_number|awk -F '--' '{print $1}'|sed -n 1p)
+		init_pid_pstree="0"
+		while [ -z $pid_pstree_name ];do init_pid_pstree=$(echo ${init_pid_pstree}+1|bc);pid_pstree_name=$(pstree $pid_number|awk -F '--' '{print $1}'|sed -n 1p);[ "$init_pid_pstree" -eq "10" ] && break; done
+		wait
+		[ -z $pid_pstree_name ] && {
+			[ -z $1 ] && {
+			echo "$DATE_MESS $(hostname) 未查找到 $pid_number 进程号对应的程序 [ $EYOU_SYS_NAME ] " |$HA_MESSAGE ERR EYOU_MAIL ${EYOU_SER_FILE_CONF} 
+			exit 1
+				} || {
+				[ $HA_EYOU_DEBUG -eq 1 ] && {
+					 echo "未查找到 $pid_number 进程号对应的程序 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+					}
+				exit_val=1
+				}
+			}
+#start_2
+		[ $exit_val -eq 0 ] && {
+			EYOU_SYS_NAME_1=${EYOU_SYS_NAME#m}
+			EYOU_SYS_NAME_1=${EYOU_SYS_NAME_1%d}
+			EYOU_SYS_NAME_1=${EYOU_SYS_NAME_1%_index}
+			EYOU_SYS_NAME_1=${EYOU_SYS_NAME_1%_log}
+			EYOU_SYS_NAME_1=${EYOU_SYS_NAME_1%_session}
+			EYOU_SYS_NAME_1=${EYOU_SYS_NAME_1%_fix}
+			EYOU_SYS_NAME_1=${EYOU_SYS_NAME_1%_hot}
+			[[ "$pid_pstree_name" =~ "$EYOU_SYS_NAME_1" ]] && exit_val=0 || {
+				[ -z $1 ] && {
+				echo "$DATE_MESS $(hostname) $pid_number 进程号对应的程序非本程序 [ $EYOU_SYS_NAME ] " |$HA_MESSAGE ERR EYOU_MAIL ${EYOU_SER_FILE_CONF} 
+				exit 1
+					} || {
+					[ $HA_EYOU_DEBUG -eq 1 ] && {
+						echo "$pid_number 进程号对应的程序非本程序 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+						}
+					exit_val=1
+					}
+				}
+#start_3
+				[ $exit_val -eq 0 ] && {
+					if [[ "$EYOU_SYS_NAME" =~ "mysql" ]];then
+					PATH_OPT_MYSQL=$(awk -F '=' '{if($1 == "'PATH_OPT_MYSQL'") {print $2}}' $HA_TEMP/eyou_mail_pid)
+					PATH_ETC=$(awk -F '=' '{if($1 == "'PATH_ETC'") {print $2}}' $HA_TEMP/eyou_mail_pid)
+					EYOU_SYS_MYSQL_NAME=${EYOU_SYS_NAME#mysql}
+					$PATH_OPT_MYSQL/bin/mysqladmin --defaults-file=$PATH_ETC/mysql/my${EYOU_SYS_MYSQL_NAME}.cnf ping >/dev/null 2>&1
+					exit_val=$?
+					wait
+					[ $exit_val -eq 0 ] || {
+						[ -z $1 ] && {
+					echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME mysqladmin ping 失败" |$HA_MESSAGE ERR EYOU_MAIL ${EYOU_SER_FILE_CONF}
+					$HA_SBIN/take_snap $EYOU_SYS_NAME >/dev/null 2>&1
+						} || {
+						[ $HA_EYOU_DEBUG -eq 1 ] && {
+							echo "mysqladmin ping 失败 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+							}
+						exit_val=1
+						}
+					}
+					fi
+#start_3_end
+				}
+#start_2_end
+			}
+#start_1_end
+		}
+	elif [ "$EYOU_SYS_NAME" != "cron_etc" ] && [ $exit_val -ne 0 ];then
+	[ $HA_EYOU_DEBUG -eq 1 ] && {
+		echo "进程ID文件不存在 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+		}
+	exit_val=1
+	elif [ "$EYOU_SYS_NAME" == "cron_etc" ] && [ $exit_val -eq 0 ];then
+	[ $HA_EYOU_DEBUG -eq 1 ] && {
+		echo "成功 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+		}
+	exit_val=0
+	elif [ "$EYOU_SYS_NAME" == "cron_etc" ] && [ $exit_val -ne 0 ];then
+	[ $HA_EYOU_DEBUG -eq 1 ] && {
+		echo "失败 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+		}
+	exit_val=1
+	else
+#		echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 服务不存在，请检测。" |$HA_MESSAGE ERR EYOU_MAIL ${EYOU_SER_FILE_CONF}
+		[ $HA_EYOU_DEBUG -eq 1 ] && {
+			echo "未知 [ $EYOU_SYS_NAME ]" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME $1 
+			}
+		:
+	fi
+
+}
+
+eyou_stop () {
+exit_val=""
+stop_number=1
+[[ "$EYOU_SYS_NAME" =~ "mysql" ]] && {
+check_disk_mount_port
+exit_val=${?}
+echo $exit_val
+}
+if [[ "$EYOU_SYS_NAME" =~ "mysql" ]] && [ ${exit_val} -eq "0" ];then
+	exit_val=""
+	$EYOU_MAIL stop $EYOU_SYS_NAME >/dev/null 2>&1
+	wait;
+	$EYOU_MAIL watch $EYOU_SYS_NAME >>/dev/null 2>&1
+	eyou_stop_num=${?}
+	wait;
+	while [ $eyou_stop_num -eq 0 ];do [ ${stop_number} -eq 5 ] && break; $EYOU_MAIL stop $EYOU_SYS_NAME >>/dev/null 2>&1;wait;$EYOU_MAIL watch $EYOU_SYS_NAME >>/dev/null 2>&1; eyou_stop_num=${?};wait;stop_number=$(echo ${stop_number}+1|bc);done
+	if [ $HA_EYOU_DEBUG -eq 0 ];then
+		:
+	elif [ $HA_EYOU_DEBUG -eq 1 ];then
+	$EYOU_MAIL watch $EYOU_SYS_NAME | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	echo "eyou_mail stop $EYOU_SYS_NAME number is $stop_number ..." | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	fi
+	wait;
+	eyou_status stop
+	wait;
+        if [ $exit_val -eq 0 ] && [ $HA_EYOU_DEBUG -eq 1 ];then
+        echo "停止 程序过程 检测程序状态OK，会导致停止失败。" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	exit_val=1
+        elif [ $exit_val -eq 0 ] && [ $HA_EYOU_DEBUG -ne 1 ];then
+	exit_val=1
+        elif [ $exit_val -ne 0 ] && [ $HA_EYOU_DEBUG -eq 1 ];then
+        echo "停止 程序过程 检测程序状失败，正常现象关闭程序。" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	exit_val=0
+        elif [ $exit_val -ne 0 ] && [ $HA_EYOU_DEBUG -ne 1 ];then
+	exit_val=0
+	else 
+        echo "停止 程序过程 检测程序有空变量 错误ERR，会导致停止失败。" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+        fi
+	
+elif [[ "$EYOU_SYS_NAME" =~ "mysql" ]] && [ ${exit_val} -ne "0" ];then
+#	$EYOU_MAIL watch $EYOU_SYS_NAME |grep \/|awk '{print $1}'|xargs kill -9 
+	timeout 10 $EYOU_MAIL stop $EYOU_SYS_NAME >/dev/null 2>&1
+	wait;
+	if [ $HA_EYOU_DEBUG -eq 0 ];then
+		:
+	elif [ $HA_EYOU_DEBUG -eq 1 ];then
+	timeout 10 $EYOU_MAIL watch $EYOU_SYS_NAME | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	echo "EYOU_SYS_NAME =~ mysql && exit_val -ne 0" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	fi
+	wait;
+	exit_val=0
+else
+	$EYOU_MAIL stop $EYOU_SYS_NAME >/dev/null 2>&1
+	wait;
+	$EYOU_MAIL watch $EYOU_SYS_NAME >>/dev/null 2>&1
+	eyou_stop_num=${?}
+	wait;
+	while [ $eyou_stop_num -eq 0 ];do [ ${stop_number} -eq 5 ] && break; $EYOU_MAIL stop $EYOU_SYS_NAME >>/dev/null 2>&1;wait;$EYOU_MAIL watch $EYOU_SYS_NAME >>/dev/null 2>&1; eyou_stop_num=${?};wait;stop_number=$(echo ${stop_number}+1|bc);done
+	if [ $HA_EYOU_DEBUG -eq 0 ];then
+		:
+	elif [ $HA_EYOU_DEBUG -eq 1 ];then
+	$EYOU_MAIL watch $EYOU_SYS_NAME | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	echo "eyou_mail stop $EYOU_SYS_NAME number is $stop_number ..." |$HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	fi
+	wait;
+	eyou_status stop
+	wait;
+        if [ $exit_val -eq 0 ] && [ $HA_EYOU_DEBUG -eq 1 ];then
+        echo "停止 程序过程 检测程序状态OK，会导致停止失败。" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	exit_val=1
+        elif [ $exit_val -eq 0 ] && [ $HA_EYOU_DEBUG -ne 1 ];then
+	exit_val=1
+        elif [ $exit_val -ne 0 ] && [ $HA_EYOU_DEBUG -eq 1 ];then
+        echo "停止 程序过程 检测程序状失败，正常现象关闭程序。" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	exit_val=0
+        elif [ $exit_val -ne 0 ] && [ $HA_EYOU_DEBUG -ne 1 ];then
+	exit_val=0
+	else 
+        echo "停止 程序过程 检测程序有空变量 错误ERR，会导致停止失败。" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+        fi
+fi
+	wait;
+	if [ "$exit_val" -eq "0" ];then
+			if [ "$EYOU_SYS_NAME" == "mysql" ] || [ "$EYOU_SYS_NAME" == "mysql_index" ] || [ "$EYOU_SYS_NAME" == "mysql_log" ] || [ "$EYOU_SYS_NAME" == "mproxy" ] || [ "$EYOU_SYS_NAME" == "mproxy_index" ] || [ "$EYOU_SYS_NAME" == "memcache_session" ] || [ "$EYOU_SYS_NAME" == "memcache_fix" ] || [ "$EYOU_SYS_NAME" == "memcache_hot" ];then
+			:
+			else
+				if [ "$($EYOU_MAIL watch $EYOU_SYS_NAME |grep \/|awk '{print $1}'|wc -l)" == "0" ];then
+					:
+				else
+					$EYOU_MAIL watch $EYOU_SYS_NAME |grep \/|awk '{print $1}'|xargs kill -9 
+					wait;
+				fi
+			fi
+	echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME stop [ 停止成功 ] [ OK ] DEBUG_ID: [ $DEBUG_ID ]" |$HA_MESSAGE OK EYOU_MAIL $EYOU_SER_FILE_CONF
+	rm -rf $HA_RUN/eyou_${EYOU_SYS_NAME}.pid
+	[ -f $EYOU_SYS_PID_FILE ] && rm -rf $EYOU_SYS_PID_FILE
+	wait
+	exit_val=0
+	else
+	echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME stop [ 停止失败 ] [ ERROR ] DEBUG_ID: [ $DEBUG_ID ]" |$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+	wait
+	exit_val=1
+	fi
+
+}
+
+check_disk_mount_port () {
+
+#$HA_PLUGIN/eyou_check_disk_port status
+$HA_SBIN/eyou_check_disk_nfs_port status 1
+#nc_check_nfs_port status
+
+}
+
+eyou_check_status () {
+
+if [ $HA_WATCH_ALL -eq 1 ];then
+	echo ${HA_WATCH[@]}|wc -w
+	for i in $(seq 0 `echo ${HA_WATCH[@]}|wc -w`)
+		do
+	[ "${HA_WATCH[$i]}" == "${EYOU_SYS_NAME}" ] && HA_WATCH_PRO="1"
+		done
+	if [ ! -z "$HA_WATCH_PRO" ];then
+		eyou_status
+	else
+	[ -f "$HA_RUN/eyou_${EYOU_SYS_NAME}.pid" ] && exit 0 || exit 1
+	fi
+elif [ $HA_WATCH_ALL -eq 0 ];then
+	[ -f "$HA_RUN/eyou_${EYOU_SYS_NAME}.pid" ] && exit 0 || exit 1
+fi
+
+
+
+}
+
+case $1 in
+	start)
+		eyou_start
+	;;
+	status)
+		eyou_check_status
+	;;
+	stop)
+		eyou_stop
+	;;
+	*)
+		echo "Usage: $0 {start|stop|status}"
+		exit_val=1111
+	;;
+esac
+
+exit $exit_val

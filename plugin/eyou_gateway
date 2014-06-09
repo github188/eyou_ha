@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# by liguopeng@eyou.net
+# 网关 HA 监管脚本
+
+GATEWAY_PATH="/var/emdg/etc/gw_init"
+GATEWAY_LOG="/var/emdg/log"
+
+start_emdg () {
+	$GATEWAY_PATH start >/dev/null 2>&1
+	exit_val=0
+	[ -f $GATEWAY_LOG/gw_init.pid ] && {
+	rm -rf $GATEWAY_LOG/gw_init.pid
+	} || {
+	touch $GATEWAY_LOG/gw_init.pid
+	}
+}
+
+stop_emdg () {
+	$GATEWAY_PATH stop >/dev/null 2>&1
+	exit_val=0
+	[ -f $GATEWAY_LOG/gw_init.pid ] && {
+	rm -rf $GATEWAY_LOG/gw_init.pid
+	}
+}
+
+status_emdg () {
+	[ -f $GATEWAY_LOG/gw_init.pid ] && exit_val=0 || exit_val=1
+}
+
+case $1 in
+	start )
+		start_emdg
+	;;
+	stop )
+		stop_emdg
+	;;
+	status )
+		status_emdg
+	;;
+	* )
+		echo $0 start | status | stop
+esac
+exit $exit_val

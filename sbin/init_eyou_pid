@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+#EYOU_MAIL="$HA_SBIN/eyou_mail"
+EYOU_MAIL="$(find /usr/local/eyou/mail/ -type f -name  eyou_mail|head -1)"
+EYOU_VER_PATH=$(find /usr/local/eyou/mail -type f -name conf_global.php)
+EYOU_VERSION=$(grep EYOUM_VERSION $EYOU_VER_PATH|awk -F"'" '{print $4}')
+
+HA_WATCH_CONF=$HA_TEMP/HA_WATCH.ini
+
+CREATE_INIT_PID() {
+pid_num=$(grep -n '^PIDF_' $EYOU_MAIL|tail -1 |awk -F ':' '{print $1}')
+head -$pid_num $EYOU_MAIL > $HA_TMP/eyou_mail_test
+sh -x $HA_TMP/eyou_mail_test > $HA_TEMP/eyou_mail_pid 2>&1
+rm -rf $HA_TMP/eyou_mail_test
+sed -i 's/^+ //g' $HA_TEMP/eyou_mail_pid
+echo "#VERSION: ${EYOU_VERSION}" >> $HA_TEMP/eyou_mail_pid
+chmod +x $HA_TEMP/eyou_mail_pid
+}
+
+[ -z "$EYOU_MAIL" ] && {
+	echo "未找到eyou_mail 脚本位置"
+}
+
+if [ -f $HA_TEMP/eyou_mail_pid ];then
+	[ "${EYOU_VERSION}" == "$(grep '#VERSION: ' $HA_TEMP/eyou_mail_pid|awk '{print $2}')" ] || {
+	mv $HA_TEMP/eyou_mail_pid $HA_TEMP/eyou_mail_pid.$(date +%s).old
+	CREATE_INIT_PID
+	}
+else
+	CREATE_INIT_PID
+fi
+
+CREATE_INIT_MODE_WATCH () {
+
+. $(find /usr/local/eyou/mail -type f -name em_init_config)
+
+echo '#!/usr/bin/env bash' > $HA_WATCH_CONF
+echo '' >> $HA_WATCH_CONF
+echo '#是否启用HA start_stop debug 1 启用 0 关闭' >> $HA_WATCH_CONF
+echo 'HA_EYOU_DEBUG="1"' >> $HA_WATCH_CONF
+echo '#是否启用HA 监控服务 单个服务注释禁用，如果所有服务 将配置改为0即可，默认1 监控' >> $HA_WATCH_CONF
+echo 'HA_WATCH_ALL="1"' >> $HA_WATCH_CONF
+echo 'HA_WATCH=(' >> $HA_WATCH_CONF
+echo -e ${ARRAY_START[@]}|sed 's/ /\n   /g'|sed '1s/^/  /' >> $HA_WATCH_CONF
+echo ')' >> $HA_WATCH_CONF
+echo "#VERSION: ${EYOU_VERSION}" >> $HA_WATCH_CONF
+chmod +x $HA_WATCH_CONF
+
+}
+
+if [ -f "$HA_WATCH_CONF" ];then
+	[ "${EYOU_VERSION}" == "$(grep '#VERSION: ' $HA_TEMP/HA_WATCH.ini|awk '{print $2}')" ] || { 
+	mv $HA_WATCH_CONF $HA_WATCH_CONF.$(date +%s)
+	CREATE_INIT_MODE_WATCH
+	}
+	
+else
+	CREATE_INIT_MODE_WATCH
+fi
+

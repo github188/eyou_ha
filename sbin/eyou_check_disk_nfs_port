@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+EYOU_MAIL="$HA_SBIN/eyou_mail"
+DATE_MESS=$(date +'%F %H:%M:%S')
+pid_name="$(basename $0).pid"
+
+[ -f $HA_SBIN/check_master_slave ] && . $HA_SBIN/check_master_slave || {
+                echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 检测 $HA_SBIN/check_master_slave 不存在。"|$HA_MESSAGE ERR EYOU_MAI
+L $EYOU_SER_FILE_CONF
+                exit 121
+        }
+
+nc_check_nfs_port () {
+exit_val="0"
+DISK_SCAN_CHECK
+[ -z ${DISK_NUM} ] && DISK_NUM=0
+for source_disk in $(seq ${DISK_NUM})
+do
+	DISK_MOUNT="$(eval echo \${DISK_MOUNT_${i}})"
+        DISK_MOUNT_NFS_IP="$(eval echo \${DISK_MOUNT_${i}}|grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')"
+	if [ ! -z ${DISK_MOUNT_NFS_IP} ];then
+	source_ip=${DISK_MOUNT_NFS_IP}
+	nc -v4 -z -w $NC_WAIT_TIME $source_ip $HA_NFS_PORT 2>&1 >/dev/null
+	exit_val=${?}
+		if [ ${exit_val} -eq "0" ] && [ -z ${1} ];then
+			echo "$(date +%'F %H:%M:%S') $(hostname) check ${source_ip} port [${HA_NFS_PORT}/nfs] is ok. " |$HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
+		elif [ ${exit_val} -ne "0" ] && [ -z ${2} ];then
+			echo "$(date +%'F %H:%M:%S') $(hostname) check ${source_ip} port [${HA_NFS_PORT}/nfs] is err. " |$HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+		fi
+	fi
+done
+}
+
+
+case $1 in
+	start)
+	nc_check_nfs_port
+	[ $exit_val -eq 0 ] && touch $HA_RUN/$pid_name
+	;;
+	status)
+	if [ ! -z $2 ] && [ "$2" -eq "1" ] ;then
+		nc_check_nfs_port status $2 
+	else
+	[ -f $HA_RUN/$pid_name ] && nc_check_nfs_port status || exit_val="1"
+	fi
+	;;
+	stop)
+	rm -rf $HA_RUN/$pid_name
+	exit_val=0
+	;;
+	*)
+	echo $"Usage: $0 {start|stop|status}";exit_val="1"
+	;;
+esac
+
+#if [ ! -z $2 ] && [ "$2" -eq "1" ] ;then exit $exit_val ;fi
+exit $exit_val

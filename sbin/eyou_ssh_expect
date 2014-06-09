@@ -1,0 +1,13 @@
+#!/usr/bin/env expect
+
+set timeout 30
+set IP [lindex $argv 0]
+set PORT [lindex $argv 1]
+set CMD [lindex $argv 2]
+spawn ssh $IP -p $PORT $CMD
+expect {
+"*continue connecting*" { send "yes\r"; exp_continue}
+}
+
+#expect eof  
+

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+#by liguopeng email:liguopeng@eyou.net
+#检测本机器master or slave 状态
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+
+[ -d $HA_RUN ] || mkdir $HA_RUN
+
+#引入配置文件
+HA_CONFIG="$HA_CONF/ha_conf.ini"
+
+[ -f $HA_CONFIG ] && . $HA_CONFIG || {
+	echo "$(hostname) $(date +%'F %H:%M:%S') $HA_CONFIG 目录不存在，退出。" | $HA_MESSAGE ERR
+	exit 1
+	}
+
+[ -z ${EMAIL_VIP} ] && {
+	echo "$(hostname) $(date +%'F %H:%M:%S') $HA_CONFIG 中 EMAIL_VIP 为空。" | $HA_MESSAGE ERR
+	exit 1
+	}
+
+#判断虚IP是否在本机 如在本机 master 否则 slave
+if [ $(ip a|awk '$2~/'"$EMAIL_VIP"'\/[0-9][0-9]$/{print $2,$8}'|wc -l) -eq 0 ];then
+	ha_status_master_slave="Slave_$(hostname)"
+elif [ $(ip a|awk '$2~/'"$EMAIL_VIP"'\/[0-9][0-9]$/{print $2,$8}'|wc -l) -eq 1 ];then
+	ha_status_master_slave="Master_$(hostname)"
+else
+	ha_status_master_slave=Master_Slave
+fi
+
+#定义环境变量名称
+if [ "$ha_status_master_slave" != "Master_Slave" ];then
+#定义当前目录变量
+	EYOU_TMP_CHECK_DIR="${EYOU_TMP_lgp_DIR}/$ha_status_master_slave"
+#定义磁盘扫描日志存放目录
+	CHECK_DISK_SCAN_CONF="${EYOU_TMP_CHECK_DIR}/${CHECK_DISK_SCAN}"
+	EYOU_CHECK_DISK_XT="${EYOU_TMP_lgp_DIR}/.disk_scan"
+#检测所有节点到上线状态
+	CHECK_NODE_START_CONF="${EYOU_TMP_CHECK_DIR}/${CHECK_NODE_START}"
+	CHECK_NODE_START_EMAIL_CONF="${EYOU_TMP_CHECK_DIR}/${CHECK_NODE_START_EMAIL}"
+#检测所有节点网络状态
+	CHECK_NODE_NETWORK_CONF="${EYOU_TMP_CHECK_DIR}/${CHECK_NODE_NETWORK}"
+	CHECK_NODE_NETWORK_EMAIL_CONF="${EYOU_TMP_CHECK_DIR}/${CHECK_NODE_NETWORK_EMAIL}"
+#配置发送邮件到缓存文件
+	SEND_EMAILFILE_CONF="${EYOU_TMP_CHECK_DIR}/${SEND_EMAILFILE}"
+#定义eyou启动停止的存放日志
+	EYOU_SER_FILE_CONF="${EYOU_TMP_CHECK_DIR}/${EYOU_SER_FILE}"
+#邮件服务变更的文件FAIL
+	EYOU_SER_FAIL_FILE_CONF="${EYOU_TMP_CHECK_DIR}/${EYOU_SER_FAIL_FILE}"
+#配置快照缓存文件
+	EYOU_take_snap_dirname_CONF="${EYOU_TMP_CHECK_DIR}/${EYOU_take_snap_dirname}"
+else
+	:
+fi
+[ -d $EYOU_TMP_CHECK_DIR ] || mkdir $EYOU_TMP_CHECK_DIR -p

@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+pid_name="$(basename $0).pid"
+
+[ -f $HA_SBIN/check_master_slave ] && . $HA_SBIN/check_master_slave || {
+		echo "$DATE_MESS $(hostname) $EYOU_SYS_NAME 检测 $HA_SBIN/check_master_slave 不存在。"|$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
+		exit 121
+	}
+
+check_disk_port () {
+DISK_SCAN_CHECK
+if [ ${DISK_TYPE} == "nfsext" ] || [ ${DISK_TYPE} == "ext" ];then
+        $HA_SBIN/eyou_check_disk_not_nfs $1
+elif [ ${DISK_TYPE} == "nfs" ];then
+        $HA_SBIN/eyou_check_disk_nfs_port $1
+fi
+
+}
+
+
+mount_disk () {
+	if [ ${1} == "mount" ];then
+		if [ "$(eval echo \${DISK_MOUNT_${i}}|cut -d ',' -f1|grep ':'|wc -l)" -ne "0" ];then
+			timeout 5 mount -t ${DISK_TYPE} -o tcp,nolock,rw ${DISK_DEV} ${DISK_DIR}
+		else
+			timeout 5 mount -t ${DISK_TYPE} ${DISK_DEV} ${DISK_DIR}
+	
+		fi
+			if [ ${?} -eq "0" ];then
+			echo "$(date +%'F %H:%M:%S') $(hostname) 挂载磁盘${DISK_DEV}设备成功。" | $HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
+			exit_val="0"
+			else
+			echo "$(date +%'F %H:%M:%S') $(hostname) 挂载磁盘${DISK_DEV}设备失败。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+			exit_val="1"
+			fi
+	elif [ ${1} == "umount" ];then
+			timeout 5 umount ${DISK_DIR}
+			if [ ${?} -eq "0" ];then
+			echo "$(date +%'F %H:%M:%S') $(hostname) 卸载磁盘${DISK_DEV}设备成功。" | $HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
+			exit_val="0"
+			else
+				SYSTEM=$(cat /etc/issue|grep -Ei 'redhat|centos' |grep -o [0-9]\.[0-9])
+				 [[ $SYSTEM =~ 6 ]] && {
+				echo "$(date +%'F %H:%M:%S') $(hostname) 正常卸载磁盘${DISK_DEV}设备失败，使用fuser -k来进行释放设备。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+				timeout 5 fuser -k ${DISK_DIR} && umount ${DISK_DIR}
+				}
+				 [[ $SYSTEM =~ 5 ]] && {
+				echo "$(date +%'F %H:%M:%S') $(hostname) 正常卸载磁盘${DISK_DEV}设备失败，使用fuser -k来进行释放设备。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+				abcdefg 2> /dev/null
+				}
+				if [ ${?} -eq "0" ];then
+				echo "$(date +%'F %H:%M:%S') $(hostname) fuser -k 卸载磁盘${DISK_DEV}设备成功。" | $HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
+				exit_val="0"
+				else
+				echo "$(date +%'F %H:%M:%S') $(hostname) fuser -k 卸载磁盘${DISK_DEV}设备失败，使用umount -l进行释放。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+				umount -l ${DISK_DIR} && echo "$(date +%'F %H:%M:%S') $(hostname) umount -l 卸载磁盘${DISK_DEV}设备成功。" | $HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
+				exit_val="0"
+					:
+				fi
+			fi
+			
+	elif [ ${1} == "check" ];then
+			timeout 5 touch ${DISK_DIR}/.check_eyou_ha_disk_$(hostname) && timeout 5 rm -rf ${DISK_DIR}/.check_eyou_ha_disk_$(hostname)
+			[ ${?} -eq "0" ] || {
+				echo "$(date +%'F %H:%M:%S') $(hostname) 检测磁盘，创建${DISK_DIR}/.check_eyou_ha_disk_$(hostname) 失败。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+				exit_val="1"
+			}
+		else
+		exit_val=0
+	fi
+}
+
+check_mount_disk () {
+
+for i in ${DISK_NUM}
+do
+        DISK_DEV=$(eval echo \${DISK_MOUNT_${i}}|cut -d ',' -f1)
+	if [ $(echo ${DISK_DEV}|grep '^-U'|wc -l) -ne "0" ];then
+		DISK_DEV="/dev/disk/by-uuid/$(ls -l /dev/disk/by-uuid |grep $(echo ${DISK_DEV}|sed 's/-U //g') | awk '{print $11}')"
+	fi
+        DISK_DIR=$(eval echo \${DISK_MOUNT_${i}}|cut -d ',' -f2)
+        DISK_TYPE=$(eval echo \${DISK_MOUNT_${i}}|cut -d ',' -f3)
+#	if [ $(mount -l |grep $(basename $DISK_DEV)|grep $DISK_DIR|grep $DISK_TYPE|wc -l ) -ne "0" ];then
+	if [ $(mount -l |grep $DISK_DIR|grep $DISK_TYPE|wc -l ) -ne "0" ];then
+		if [ "${1}" == "mount" ];then
+			echo "$(date +%'F %H:%M:%S') $(hostname) 挂载检测磁盘，${DISK_DEV}已挂载,跳过挂载项。" | $HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
+			exit_val=0;
+		elif [ "${1}" == "umount" ];then
+			mount_disk umount
+		elif [ "${1}" == "check" ];then
+			mount_disk check
+		else
+			exit_val=0;
+		fi
+	else
+		if [ "${1}" == "mount" ];then
+			mount_disk mount
+		elif [ "${1}" == "umount" ];then
+			echo "$(date +%'F %H:%M:%S') $(hostname) 挂载检测磁盘，${DISK_DEV}未挂载,跳过卸载项。" | $HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
+			exit_val=0;
+		elif [ "${1}" == "check" ];then
+			echo "$(date +%'F %H:%M:%S') $(hostname) 挂载检测磁盘，${DISK_DEV}未挂载,退出。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+			exit_val=1;
+		else
+			exit_val=0;
+		fi
+		
+			
+	fi
+
+done
+}
+
+check_disk_nfs () {
+DISK_SCAN_CHECK
+if [ ${DISK_TYPE} == "nfsext" ] || [ ${DISK_TYPE} == "ext" ];then
+#       . $HA_SBIN/eyou_check_disk_not_nfs $1
+        exit_val=0
+elif [ ${DISK_TYPE} == "nfs" ];then
+        $HA_SBIN/eyou_check_disk_nfs $1
+	exit_val=$?
+fi
+
+}
+
+
+
+case $1 in
+	start)
+	check_disk_port start
+	exit_val="${?}"
+	[ $exit_val -eq "0" ] || exit $exit_val
+	check_mount_disk mount 
+	[ $exit_val -eq "0" ] && touch $HA_RUN/$pid_name || exit $exit_val
+	check_disk_nfs start
+	;;
+	stop)
+	check_disk_nfs stop
+	[ $exit_val -eq "0" ] || exit $exit_val
+	check_mount_disk umount
+	[ $exit_val -eq "0" ] && rm -rf $HA_RUN/$pid_name || exit $exit_val
+	check_disk_port stop
+	exit_val="${?}"
+	;;
+	status)
+	if [ -f $HA_RUN/$pid_name ];then
+		check_disk_port status
+		exit_val="${?}"
+		[ $exit_val -eq "0" ] || exit $exit_val
+		check_mount_disk check 
+		[ $exit_val -eq "0" ] || exit $exit_val
+		check_disk_nfs status
+	else
+		echo "$(date +'%F %H:%M:%S') $(hostname) 磁盘整体检测 没有 $HA_RUN/$pid_name 文件。" |$HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
+		 exit_val=1
+	fi
+	;;
+esac
+exit ${exit_val}

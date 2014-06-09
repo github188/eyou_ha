@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+BASENAME="$(basename $0)"
+SHELL_PWD_PATH="$(cd $(dirname $0);pwd -P)"
+SHELL_LIKE="$(ls -l ${SHELL_PWD_PATH}/${BASENAME}|awk -F'>' '{print $2}')"
+[ -z ${SHELL_LIKE} ] || SHELL_PWD_PATH=$(dirname ${SHELL_LIKE})
+HA_DIR="${SHELL_PWD_PATH%/*}"
+HA_RUN="$HA_DIR/run"
+HA_CONF="$HA_DIR/etc"
+HA_SBIN="$HA_DIR/sbin"
+HA_PLUGIN="$HA_DIR/plugin"
+HA_MESSAGE="$HA_SBIN/message_agent"
+HA_LOG="$HA_DIR/log"
+HA_TEMP="$HA_DIR/template"
+HA_TMP="$HA_DIR/tmp"
+
+CONFIG_FILE="/usr/local/eyou/mail/etc/em_init_config"
+[ -f $CONFIG_FILE ] && . $CONFIG_FILE || {
+		echo "$(date +'%F %H:%M:%S') $(hostname) 初始化检测失败，$CONFIG_FILE 未找到。" |$HA_MESSAGE ERR INIT
+		exit 123
+	}
+
+INIT_CHECK () {
+if [ -f /etc/init.d/${1} ];then
+	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化检测 /etc/init.d/${1} 存在，退出." | $HA_MESSAGE OK INIT
+else
+	ln -s $HA_PLUGIN/${2} /etc/init.d/${1}
+	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化 /etc/init.d/${1} 链接成功." | $HA_MESSAGE OK INIT
+fi
+}
+
+HA_SERVER=$(grep ^HA_SERVER $HA_CONF/ha_conf.ini |cut -d '"' -f2)
+if [ $HA_SERVER == "mail" ];then
+	for i in ${ARRAY_START[@]}
+	do
+	INIT_CHECK eyou_mail_${i} eyou_mail_check
+	done
+elif [ $HA_SERVER == "gateway" ];then
+	INIT_CHECK eyou_gateway	eyou_gateway
+elif [ $HA_SERVER == "2in1" ];then
+	for i in ${ARRAY_START[@]}
+	do
+	INIT_CHECK eyou_mail_${i} eyou_mail_check
+	done
+	INIT_CHECK eyou_gateway	eyou_gateway
+else
+	echo $HA_CONF/ha_conf.ini HA_SERVER 配置非标准
+	exit 1
+fi
+
+INIT_CHECK eyou_mount eyou_mount
+INIT_CHECK eyou_check_network eyou_check_network
+INIT_CHECK eyou_check_sendemail eyou_check_sendemail
+INIT_CHECK eyou_cron_corolog eyou_cron_corolog
+exit 0
