@@ -57,7 +57,7 @@ sysconfig_crm () {
 echo '
 crm configure rsc_defaults resource-stickiness=100 failure-timeout=14400s target-role=Stopped
 wait;
-crm configure op_defaults timeout=60s
+crm configure op_defaults timeout=300s
 wait;
 crm configure property stonith-enabled=false no-quorum-policy=ignore
 wait;
@@ -492,7 +492,7 @@ fi
 
 gateway_crm () {
 echo '
-crm configure primitive eyou_gateway lsb:eyou_gateway op monitor interval=1m timeout=180s
+crm configure primitive eyou_gateway lsb:eyou_gateway op monitor interval=1m timeout=300s
 wait;
 crm configure colocation eyou_gateway_colo inf: eyou_mail_vip eyou_gateway
 wait;

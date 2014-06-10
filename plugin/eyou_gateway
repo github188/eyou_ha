@@ -16,9 +16,11 @@ start_emdg () {
 }
 
 stop_emdg () {
+	timeout 5 [ -f "${GATEWAY_PATH}" ] && {
 	$GATEWAY_PATH stop >/dev/null 2>&1
+		}
 	exit_val=0
-	[ -f $GATEWAY_LOG/gw_init.pid ] && {
+	timeout 5 [ -f $GATEWAY_LOG/gw_init.pid ] && {
 	rm -rf $GATEWAY_LOG/gw_init.pid
 	}
 }

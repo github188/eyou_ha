@@ -242,12 +242,12 @@ if [[ "$EYOU_SYS_NAME" =~ "mysql" ]] && [ ${exit_val} -eq "0" ];then
 	
 elif [[ "$EYOU_SYS_NAME" =~ "mysql" ]] && [ ${exit_val} -ne "0" ];then
 #	$EYOU_MAIL watch $EYOU_SYS_NAME |grep \/|awk '{print $1}'|xargs kill -9 
-	timeout 10 $EYOU_MAIL stop $EYOU_SYS_NAME >/dev/null 2>&1
+	timeout 5 $EYOU_MAIL stop $EYOU_SYS_NAME >/dev/null 2>&1
 	wait;
 	if [ $HA_EYOU_DEBUG -eq 0 ];then
 		:
 	elif [ $HA_EYOU_DEBUG -eq 1 ];then
-	timeout 10 $EYOU_MAIL watch $EYOU_SYS_NAME | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
+	timeout 5 $EYOU_MAIL watch $EYOU_SYS_NAME |timeout 5 $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
 	echo "EYOU_SYS_NAME =~ mysql && exit_val -ne 0" | $HA_MESSAGE DEBUG $DEBUG_ID $EYOU_SYS_NAME stop
 	fi
 	wait;

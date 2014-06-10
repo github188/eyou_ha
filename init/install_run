@@ -16,7 +16,7 @@ HA_TEMP="$HA_DIR/template"
 HA_TMP="$HA_DIR/tmp"
 HA_INIT="$HA_DIR/init"
 
-SYSTEM=$(cat /etc/issue|grep -Ei 'redhat|centos' |grep -o [0-9]\.[0-9])
+SYSTEM=$(cat /etc/issue|grep -Ei 'red hat|centos' |grep -o [0-9]\.[0-9])
 
 [ -f "$HA_SBIN/check_master_slave" ] && . $HA_SBIN/check_master_slave || {
                 echo "$DATE_MESS $(hostname) 检测 $HA_SBIN/check_master_slave 不存在。"|$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
