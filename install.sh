@@ -11,4 +11,9 @@ HA_TEMP="$HA_DIR/template"
 HA_TMP="$HA_DIR/tmp"
 HA_INIT="$HA_DIR/init"
 
+
+[ -f ${HA_LOG} ] || mkdir ${HA_LOG}
+[ -f ${HA_TEMP} ] || mkdir ${HA_TEMP}
+[ -f ${HA_TMP} ] || mkdir ${HA_TMP}
+[ -f ${HA_RUN} ] || mkdir ${HA_RUN}
 sh -x $HA_INIT/install_run
