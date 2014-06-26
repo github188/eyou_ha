@@ -41,6 +41,11 @@ nc -v4 -z -w 10 $EMAIL_SER_NOT_MY $SSH_PORT
 #HA_SSH_ENV="$HA_SBIN/eyou_ssh_expect $EMAIL_SER_NOT_MY $SSH_PORT"
 HA_SSH_ENV="/usr/bin/ssh $EMAIL_SER_NOT_MY -p $SSH_PORT env "
 
+${HA_SSH_ENV} "[ -f ${HA_LOG} ] || mkdir ${HA_LOG}"
+${HA_SSH_ENV} "[ -f ${HA_TEMP} ] || mkdir ${HA_TEMP}"
+${HA_SSH_ENV} "[ -f ${HA_TMP} ] || mkdir ${HA_TMP}"
+${HA_SSH_ENV} "[ -f ${HA_RUN} ] || mkdir ${HA_RUN}"
+
 $HA_INIT/init_system_rpm
 [ $? -ne 0 ] && exit 1
 $HA_SSH_ENV "$HA_INIT/init_system_rpm"
