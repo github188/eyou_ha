@@ -12,8 +12,22 @@ HA_TMP="$HA_DIR/tmp"
 HA_INIT="$HA_DIR/init"
 
 
-[ -f ${HA_LOG} ] || mkdir ${HA_LOG}
-[ -f ${HA_TEMP} ] || mkdir ${HA_TEMP}
-[ -f ${HA_TMP} ] || mkdir ${HA_TMP}
-[ -f ${HA_RUN} ] || mkdir ${HA_RUN}
+[ -d ${HA_LOG} ] || mkdir ${HA_LOG}
+[ -d ${HA_TEMP} ] || mkdir ${HA_TEMP}
+[ -d ${HA_TMP} ] || mkdir ${HA_TMP}
+[ -d ${HA_RUN} ] || mkdir ${HA_RUN}
+
+[ "$1" == "init" ] && {
+sh -x $HA_INIT/init_system_rpm
+[ "${?}" -eq "0" ] || exit ${?}
+sh -x $HA_INIT/init_create_eyou_shell
+[ "${?}" -eq "0" ] || exit ${?}
+
+}
+
+[ -z "${1}" ] && {
 sh -x $HA_INIT/install_run
+}
+	
+
+

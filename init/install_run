@@ -17,6 +17,7 @@ HA_TMP="$HA_DIR/tmp"
 HA_INIT="$HA_DIR/init"
 
 SYSTEM=$(cat /etc/issue|grep -Ei 'red hat|centos' |grep -o [0-9]\.[0-9])
+while [ -z "${SYSTEM}" ];do read -p "检测系统版本失败，请手动输入 5/6: " SYSTEM; [[ "56" =~ "${SYSTEM}" ]] || SYSTEM="" ;done
 
 [ -f "$HA_SBIN/check_master_slave" ] && . $HA_SBIN/check_master_slave || {
                 echo "$DATE_MESS $(hostname) 检测 $HA_SBIN/check_master_slave 不存在。"|$HA_MESSAGE ERR EYOU_MAIL $EYOU_SER_FILE_CONF
@@ -41,10 +42,10 @@ nc -v4 -z -w 10 $EMAIL_SER_NOT_MY $SSH_PORT
 #HA_SSH_ENV="$HA_SBIN/eyou_ssh_expect $EMAIL_SER_NOT_MY $SSH_PORT"
 HA_SSH_ENV="/usr/bin/ssh $EMAIL_SER_NOT_MY -p $SSH_PORT env "
 
-${HA_SSH_ENV} "[ -f ${HA_LOG} ] || mkdir ${HA_LOG}"
-${HA_SSH_ENV} "[ -f ${HA_TEMP} ] || mkdir ${HA_TEMP}"
-${HA_SSH_ENV} "[ -f ${HA_TMP} ] || mkdir ${HA_TMP}"
-${HA_SSH_ENV} "[ -f ${HA_RUN} ] || mkdir ${HA_RUN}"
+${HA_SSH_ENV} "[ -d ${HA_LOG} ] || mkdir ${HA_LOG}"
+${HA_SSH_ENV} "[ -d ${HA_TEMP} ] || mkdir ${HA_TEMP}"
+${HA_SSH_ENV} "[ -d ${HA_TMP} ] || mkdir ${HA_TMP}"
+${HA_SSH_ENV} "[ -d ${HA_RUN} ] || mkdir ${HA_RUN}"
 
 $HA_INIT/init_system_rpm
 [ $? -ne 0 ] && exit 1

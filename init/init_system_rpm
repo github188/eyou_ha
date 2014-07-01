@@ -13,6 +13,7 @@
         echo "$(hostname) pacemaker not install , pelease install timeout.*.rpm "
         exit 1
         }
+exit 0
 
 
 #[ -x "/usr/bin/expect" ] || {
