@@ -106,7 +106,14 @@ fi
 	
 
 echo "$DATE_MESS $(hostname) 检测 corosync-keygen ,不存在则 创建，创建时间较长，请耐心等待。。。"
-[ -f /etc/corosync/authkey ] || corosync-keygen
+if [ ! -f /etc/corosync/authkey ];then
+	mv /dev/{random,random.bak}
+	ln -s /dev/urandom /dev/random
+	corosync-keygen
+	wait;
+	ulink /dev/random
+	mv /dev/{random.bak,random}
+fi
 wait
 scp /etc/corosync/corosync.conf /etc/corosync/authkey $EMAIL_SER_NOT_MY:/etc/corosync/
 wait
