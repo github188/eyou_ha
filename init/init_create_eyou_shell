@@ -14,10 +14,16 @@ HA_TEMP="$HA_DIR/template"
 HA_TMP="$HA_DIR/tmp"
 
 CONFIG_FILE="/usr/local/eyou/mail/etc/em_init_config"
-[ -f $CONFIG_FILE ] && . $CONFIG_FILE || {
+HA_SERVER=$(grep ^HA_SERVER $HA_CONF/ha_conf.ini |cut -d '"' -f2)
+if [ -f $CONFIG_FILE ] && [ $HA_SERVER != "gateway" ];then
+	source $CONFIG_FILE 
+elif [ "$HA_SERVER" == "gateway" ];then
+	:
+else
 		echo "$(date +'%F %H:%M:%S') $(hostname) 初始化检测失败，$CONFIG_FILE 未找到。" |$HA_MESSAGE ERR INIT
 		exit 123
-	}
+fi
+
 
 INIT_CHECK () {
 if [ -f /etc/init.d/${1} ];then
@@ -28,7 +34,6 @@ else
 fi
 }
 
-HA_SERVER=$(grep ^HA_SERVER $HA_CONF/ha_conf.ini |cut -d '"' -f2)
 if [ $HA_SERVER == "mail" ];then
 	for i in ${ARRAY_START[@]}
 	do
