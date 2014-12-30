@@ -122,8 +122,13 @@ fi
 wait
 scp /etc/corosync/corosync.conf /etc/corosync/authkey $EMAIL_SER_NOT_MY:/etc/corosync/
 wait
+if [ "${HA_SERVER}" == "gateway" ];then
+[ -d /var/emdg/log/cluster ] || mkdir /var/emdg/log/cluster
+$HA_SSH_ENV "[ -d /var/emdg/log/cluster ] || mkdir /var/emdg/log/cluster"
+else
 [ -d /usr/local/eyou/mail/log/cluster ] || mkdir /usr/local/eyou/mail/log/cluster
 $HA_SSH_ENV "[ -d /usr/local/eyou/mail/log/cluster ] || mkdir /usr/local/eyou/mail/log/cluster"
+fi
 
 [[ $SYSTEM =~ 5 ]] && {
 /etc/init.d/corosync start
