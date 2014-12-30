@@ -168,7 +168,7 @@ $HA_INIT/init_create_crmsh
 echo "初始化本机 HA 需要的程序。。"
 $HA_INIT/init_create_eyou_shell
 [ $? -eq 0 ] && {
-	$HA_SBIN/init_eyou_pid
+	[ "${HA_SERVER}" == "gateway" ] || $HA_SBIN/init_eyou_pid
 	}
 [ $? -eq 0 ] || {
 	echo "初始化本机 HA 需要的程序 失败，请排查。。"
@@ -177,7 +177,7 @@ $HA_INIT/init_create_eyou_shell
 echo "初始化对端机器 HA 需要的程序。。"
 $HA_SSH_ENV "$HA_INIT/init_create_eyou_shell"
 [ $? -eq 0 ] && {
-	$HA_SSH_ENV "$HA_SBIN/init_eyou_pid"
+	[ "${HA_SERVER}" == "gateway" ] || $HA_SSH_ENV "$HA_SBIN/init_eyou_pid"
 	}
 [ $? -eq 0 ] || {
 	echo "初始化对段机器 HA 需要的程序 失败，请排查。。"

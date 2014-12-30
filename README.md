@@ -6,6 +6,7 @@ by: liguopeng@eyou.net  mailbad@163.com
 
 更新版本  仅限 update version corosync 1.4.7 pacemaker 1.1.12 crmsh 2.1
 小BUG修复。
+update gateway only install.
 ==========================
 
 
