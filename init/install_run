@@ -16,7 +16,7 @@ HA_TEMP="$HA_DIR/template"
 HA_TMP="$HA_DIR/tmp"
 HA_INIT="$HA_DIR/init"
 
-SYSTEM=$(cat /etc/issue|grep -Ei 'red hat|centos' |grep -o [0-9]\.[0-9])
+SYSTEM=$(cat /etc/issue|grep -Ei 'red hat|centos' |grep -o [0-9]\.[0-9]|head -c 1)
 while [ -z "${SYSTEM}" ];do read -p "检测系统版本失败，请手动输入 5/6: " SYSTEM; [[ "56" =~ "${SYSTEM}" ]] || SYSTEM="" ;done
 
 [ -f "$HA_SBIN/check_master_slave" ] && . $HA_SBIN/check_master_slave || {
@@ -70,7 +70,7 @@ echo "$DATE_MESS $(hostname) 检测 corosync 配置文件 ,不存在则 创建�
 	}
 if [ ! -z $COROCONF ];then
 	cp -arf /etc/corosync/corosync.conf.example /etc/corosync/corosync.conf
-	sed -i "s/192.168.1.1/$EMAIL_SER_MY/g" /etc/corosync/corosync.conf
+	sed -i "s/192.168.1.0/$EMAIL_SER_MY/g" /etc/corosync/corosync.conf
 	sed -i "s/5405/$(echo $RANDOM*2312%9999|bc)/g" /etc/corosync/corosync.conf
 	sed -i 's/\/var/\/usr\/local\/eyou\/mail/g' /etc/corosync/corosync.conf
 	sed -i 's/debug: on/debug: off/g' /etc/corosync/corosync.conf
@@ -91,6 +91,10 @@ group: root
 	}
 	[[ $SYSTEM =~ 6 ]] && {
 	echo '
+amf {
+        mode: disabled        #AMF的状态 
+}
+
 service {
 ver: 1
 name: pacemaker
@@ -126,6 +130,7 @@ exit_val=$?
 }
 [[ $SYSTEM =~ 6 ]] && {
 /etc/init.d/corosync start && /etc/init.d/pacemaker start
+#/etc/init.d/pacemaker start && /etc/init.d/corosync start
 exit_val=$?
 }
 [ $exit_val -eq 0 ] || {
@@ -139,6 +144,7 @@ exit_val=$?
 }
 [[ $SYSTEM =~ 6 ]] && {
 $HA_SSH_ENV "/etc/init.d/corosync start && /etc/init.d/pacemaker start"
+#$HA_SSH_ENV "/etc/init.d/pacemaker start && /etc/init.d/corosync start"
 exit_val=$?
 }
 [ $exit_val -eq 0 ] || {

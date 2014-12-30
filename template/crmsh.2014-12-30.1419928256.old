@@ -1,0 +1,302 @@
+
+crm configure rsc_defaults resource-stickiness=100 failure-timeout=14400s target-role=Stopped
+wait;
+crm configure op_defaults timeout=300s
+wait;
+crm configure property stonith-enabled=false no-quorum-policy=ignore
+wait;
+
+
+crm configure primitive eyou_mount_disk lsb:eyou_mount 	op monitor interval=5s timeout=15s 	meta migration-threshold=2 resource-stickiness=10
+
+wait;
+
+crm configure primitive eyou_mail_vip ocf:heartbeat:IPaddr2 params ip=172.16.100.230 nic= cidr_netmask=24 op monitor interval=30s
+wait;
+crm configure primitive pingd ocf:pacemaker:ping params host_list=172.16.100.254 multiplier=100 name=pingd op monitor interval=15s timeout=60s
+wait;
+
+
+crm configure primitive eyou_check_network lsb:eyou_check_network \
+        op monitor interval=5s timeout=15s
+wait;
+crm configure clone eyou_check_clone eyou_check_network \
+        meta globally-unique="false"
+wait;
+
+
+crm configure clone pingdclone pingd \
+        meta globally-unique="false"
+wait;
+crm configure location eyou_check_network_l eyou_check_clone \
+        rule -inf: not_defined pingd or pingd lte 0
+wait;
+crm configure location eyou_ping_l eyou_mail_vip \
+        rule -inf: not_defined pingd or pingd lte 0
+wait;
+
+crm configure colocation eyou_disk_colo inf: eyou_mount_disk eyou_mail_vip
+wait;
+crm configure order eyou_disk_after inf: eyou_mount_disk eyou_mail_vip
+wait;
+crm configure primitive eyou_rsyslogd lsb:eyou_mail_rsyslogd op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_mysql lsb:eyou_mail_mysql op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_mysql_index lsb:eyou_mail_mysql_index op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_mysql_log lsb:eyou_mail_mysql_log op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_mproxy lsb:eyou_mail_mproxy op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_mproxy_index lsb:eyou_mail_mproxy_index op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_memcache_session lsb:eyou_mail_memcache_session op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_memcache_fix lsb:eyou_mail_memcache_fix op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_memcache_hot lsb:eyou_mail_memcache_hot op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_gearman lsb:eyou_mail_gearman op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_phpd lsb:eyou_mail_phpd op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_crtmpd lsb:eyou_mail_crtmpd op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_ecs_rstorage lsb:eyou_mail_ecs_rstorage op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_ecs_wstorage lsb:eyou_mail_ecs_wstorage op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_ecs_tracker lsb:eyou_mail_ecs_tracker op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_httpd lsb:eyou_mail_httpd op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_nginx lsb:eyou_mail_nginx op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_bounce lsb:eyou_mail_bounce op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_local lsb:eyou_mail_local op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_remote lsb:eyou_mail_remote op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_mlist lsb:eyou_mail_mlist op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_smtp lsb:eyou_mail_smtp op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_pop lsb:eyou_mail_pop op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_imap lsb:eyou_mail_imap op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_cleanup lsb:eyou_mail_cleanup op monitor interval=1m timeout=60s meta migration-threshold=5 resource-stickiness=10
+wait;
+crm configure primitive eyou_cron_etc lsb:eyou_mail_cron_etc op monitor interval=1m timeout=60s
+wait;
+
+crm configure primitive send_email lsb:eyou_check_sendemail \
+        op monitor interval="30s" timeout="60s"
+
+wait;
+
+#crm configure order ms_mount_nfs_after inf: eyou_mount_nfs eyou_check_disk eyou_mail_vip
+
+crm configure order eyou_vip_check_after inf: eyou_mail_vip eyou_check_clone
+wait;
+
+
+crm configure colocation eyou_mysql_colo inf: eyou_mail_vip eyou_mysql send_email
+wait;
+crm configure order eyou_mysql_after inf: eyou_mail_vip eyou_mysql eyou_mproxy
+wait;
+crm configure order eyou_mysql_sendemail inf: eyou_mysql send_email
+wait;
+
+
+crm configure colocation eyou_mysql_index_colo inf: eyou_mail_vip eyou_mysql_index send_email
+wait;
+crm configure order eyou_mysql_index_after inf: eyou_mail_vip eyou_mysql_index eyou_mproxy_index
+wait;
+crm configure order eyou_mysql_index_sendemail inf: eyou_mysql_index send_email
+wait;
+
+
+crm configure colocation eyou_mysql_log_colo inf: eyou_mail_vip eyou_mysql_log send_email
+wait;
+crm configure order eyou_mysql_log_after inf: eyou_mail_vip eyou_mysql_log
+wait;
+crm configure order eyou_mysql_log_sendemail inf: eyou_mysql_log send_email
+wait;
+
+
+crm configure colocation eyou_mproxy_colo inf: eyou_mail_vip eyou_mproxy send_email
+wait;
+crm configure order eyou_mproxy_sendemail inf: eyou_mproxy send_email
+wait;
+
+
+crm configure colocation eyou_mproxy_index_colo inf: eyou_mail_vip eyou_mproxy_index send_email
+wait;
+crm configure order eyou_mproxy_index_sendemail inf: eyou_mproxy_index send_email
+wait;
+
+
+crm configure colocation eyou_memcache_fix_colo inf: eyou_mail_vip eyou_memcache_fix send_email
+wait;
+crm configure order eyou_memcache_fix_after inf: eyou_mysql eyou_memcache_fix
+wait;
+crm configure order eyou_memcache_fix_sendemail inf: eyou_memcache_fix send_email
+wait;
+
+
+crm configure colocation eyou_memcache_hot_colo inf: eyou_mail_vip eyou_memcache_hot send_email
+wait;
+crm configure order eyou_memcache_hot_after inf: eyou_mysql eyou_memcache_hot
+wait;
+crm configure order eyou_memcache_hot_sendemail inf: eyou_memcache_hot send_email
+wait;
+
+
+crm configure colocation eyou_memcache_session_colo inf: eyou_mail_vip eyou_memcache_session send_email
+wait;
+crm configure order eyou_memcache_session_after inf: eyou_mysql eyou_memcache_session
+wait;
+crm configure order eyou_memcache_session_sendemail inf: eyou_memcache_session send_email
+wait;
+
+
+crm configure colocation eyou_gearman_colo inf: eyou_mail_vip eyou_gearman send_email
+wait;
+crm configure order eyou_gearman_after inf: eyou_mysql eyou_gearman
+wait;
+crm configure order eyou_gearman_sendemail inf: eyou_gearman send_email
+wait;
+
+
+crm configure colocation eyou_bounce_colo inf: eyou_mail_vip eyou_bounce send_email
+wait;
+crm configure order eyou_bounce_after1 inf: eyou_mproxy eyou_bounce
+wait;
+crm configure order eyou_bounce_after2 inf: eyou_memcache_fix eyou_bounce
+wait;
+crm configure order eyou_bounce_after3 inf: eyou_memcache_session eyou_bounce
+wait;
+crm configure order eyou_bounce_after4 inf: eyou_memcache_hot eyou_bounce
+wait;
+crm configure order eyou_bounce_sendemail inf: eyou_bounce send_email
+wait;
+
+
+crm configure colocation eyou_cron_etc_colo inf: eyou_mail_vip eyou_cron_etc send_email
+wait;
+crm configure order eyou_cron_etc_after inf: eyou_mail_vip eyou_cron_etc
+wait;
+crm configure order eyou_cron_etc_sendemail inf: eyou_cron_etc send_email
+wait;
+
+
+crm configure colocation eyou_cleanup_colo inf: eyou_mail_vip eyou_cleanup send_email
+wait;
+crm configure order eyou_cleanup_after inf: eyou_mail_vip eyou_cleanup
+wait;
+crm configure order eyou_cleanup_sendemail inf: eyou_cleanup send_email
+wait;
+
+
+crm configure colocation eyou_crtmpd_colo inf: eyou_mail_vip eyou_crtmpd send_email
+wait;
+crm configure order eyou_crtmpd_after inf: eyou_mail_vip eyou_crtmpd
+wait;
+crm configure order eyou_crtmpd_sendemail inf: eyou_crtmpd send_email
+wait;
+
+
+crm configure colocation eyou_httpd_colo inf: eyou_mail_vip eyou_httpd send_email
+wait;
+crm configure order eyou_httpd_after inf: eyou_mail_vip eyou_httpd
+wait;
+crm configure order eyou_httpd_sendemail inf: eyou_httpd send_email
+wait;
+
+
+crm configure colocation eyou_imap_colo inf: eyou_mail_vip eyou_imap send_email
+wait;
+crm configure order eyou_imap_after inf: eyou_mproxy eyou_imap
+wait;
+crm configure order eyou_imap_sendemail inf: eyou_imap send_email
+wait;
+
+
+crm configure colocation eyou_local_colo inf: eyou_mail_vip eyou_local send_email
+wait;
+crm configure order eyou_local_after1 inf: eyou_mproxy eyou_local
+wait;
+crm configure order eyou_local_after2 inf: eyou_memcache_fix eyou_local
+wait;
+crm configure order eyou_local_after3 inf: eyou_memcache_session eyou_local
+wait;
+crm configure order eyou_local_after4 inf: eyou_memcache_hot eyou_local
+wait;
+crm configure order eyou_local_sendemail inf: eyou_local send_email
+wait;
+
+
+crm configure colocation eyou_mlist_colo inf: eyou_mail_vip eyou_mlist send_email
+wait;
+crm configure order eyou_mlist_after1 inf: eyou_mproxy eyou_mlist
+wait;
+crm configure order eyou_mlist_after2 inf: eyou_memcache_fix eyou_mlist
+wait;
+crm configure order eyou_mlist_after3 inf: eyou_memcache_session eyou_mlist
+wait;
+crm configure order eyou_mlist_after4 inf: eyou_memcache_hot eyou_mlist
+wait;
+crm configure order eyou_mlist_sendemail inf: eyou_mlist send_email
+wait;
+
+
+crm configure colocation eyou_nginx_colo inf: eyou_mail_vip eyou_nginx send_email
+wait;
+crm configure order eyou_nginx_after inf: eyou_mail_vip eyou_nginx
+wait;
+crm configure order eyou_nginx_sendemail inf: eyou_nginx send_email
+wait;
+
+
+crm configure colocation eyou_phpd_colo inf: eyou_mail_vip eyou_phpd send_email
+wait;
+crm configure order eyou_phpd_after1 inf: eyou_mysql_log eyou_phpd
+wait;
+crm configure order eyou_phpd_after2 inf: eyou_gearman eyou_phpd
+wait;
+crm configure order eyou_phpd_sendemail inf: eyou_phpd send_email
+wait;
+
+
+crm configure colocation eyou_pop_colo inf: eyou_mail_vip eyou_pop send_email
+wait;
+crm configure order eyou_pop_after inf: eyou_mproxy eyou_pop
+wait;
+crm configure order eyou_pop_sendemail inf: eyou_pop send_email
+wait;
+
+
+crm configure colocation eyou_remote_colo inf: eyou_mail_vip eyou_remote send_email
+wait;
+crm configure order eyou_remote_after1 inf: eyou_mproxy eyou_remote
+wait;
+crm configure order eyou_remote_after2 inf: eyou_memcache_fix eyou_remote
+wait;
+crm configure order eyou_remote_after3 inf: eyou_memcache_session eyou_remote
+wait;
+crm configure order eyou_remote_after4 inf: eyou_memcache_hot eyou_remote
+wait;
+crm configure order eyou_remote_sendemail inf: eyou_remote send_email
+wait;
+
+
+crm configure colocation eyou_smtp_colo inf: eyou_mail_vip eyou_smtp send_email
+wait;
+crm configure order eyou_smtp_after inf: eyou_mproxy eyou_smtp
+wait;
+crm configure order eyou_smtp_sendemail inf: eyou_smtp send_email
+wait;
+

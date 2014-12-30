@@ -487,6 +487,16 @@ crm configure order eyou_syslog_sendemail inf: eyou_syslog send_email
 wait;
 '
 fi
+if [[ "${ARRAY_START[@]} " =~ "rsyslogd " ]];then
+echo '
+crm configure colocation eyou_rsyslogd_colo inf: eyou_mail_vip eyou_rsyslogd send_email
+wait;
+crm configure order eyou_rsyslogd_after inf: eyou_mail_vip eyou_rsyslogd
+wait;
+crm configure order eyou_rsyslogd_sendemail inf: eyou_rsyslogd send_email
+wait;
+'
+fi
 
 }
 

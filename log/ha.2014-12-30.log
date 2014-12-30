@@ -1,0 +1,150 @@
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_rsyslogd 链接成功.[0m
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_mysql 链接成功.[0m
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_mysql_index 链接成功.[0m
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_mysql_log 链接成功.[0m
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_mproxy 链接成功.[0m
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_mproxy_index 链接成功.[0m
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_memcache_session 链接成功.[0m
+[0;32m2014-12-30 16:26:43 hadoop2 初始化 /etc/init.d/eyou_mail_memcache_fix 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_memcache_hot 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_gearman 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_phpd 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_crtmpd 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_ecs_rstorage 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_ecs_wstorage 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_ecs_tracker 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_httpd 链接成功.[0m
+[0;32m2014-12-30 16:26:44 hadoop2 初始化 /etc/init.d/eyou_mail_nginx 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_bounce 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_local 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_remote 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_mlist 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_smtp 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_pop 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_imap 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_cleanup 链接成功.[0m
+[0;32m2014-12-30 16:26:45 hadoop2 初始化 /etc/init.d/eyou_mail_cron_etc 链接成功.[0m
+[0;32m2014-12-30 16:26:46 hadoop2 初始化 /etc/init.d/eyou_mount 链接成功.[0m
+[0;32m2014-12-30 16:26:46 hadoop2 初始化 /etc/init.d/eyou_check_network 链接成功.[0m
+[0;32m2014-12-30 16:26:46 hadoop2 初始化 /etc/init.d/eyou_check_sendemail 链接成功.[0m
+[0;32m2014-12-30 16:26:46 hadoop2 初始化 /etc/init.d/eyou_cron_corolog 链接成功.[0m
+[0;31m2014-12-30 16:26:57 hadoop2 磁盘整体检测 没有 /data/eyou_ha/run/eyou_mount.pid 文件。[0m
+[0;31m2014-12-30 16:29:40 hadoop2 未找到PID 文件 [ rsyslogd ][0m
+[0;31m2014-12-30 16:29:41 hadoop2 未找到PID 文件 [ mysql ][0m
+[0;31m2014-12-30 16:29:42 hadoop2 未找到PID 文件 [ mysql_index ][0m
+[0;31m2014-12-30 16:30:35 hadoop2 磁盘整体检测 没有 /data/eyou_ha/run/eyou_mount.pid 文件。[0m
+[0;31m2014-12-30 16:30:36 hadoop2 未找到PID 文件 [ rsyslogd ][0m
+[0;31m2014-12-30 16:30:36 hadoop2 未找到PID 文件 [ mysql ][0m
+[0;31m2014-12-30 16:30:36 hadoop2 未找到PID 文件 [ mysql_index ][0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_rsyslogd 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_mysql 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_mysql_index 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_mysql_log 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_mproxy 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_mproxy_index 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_memcache_session 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_memcache_fix 存在，退出.[0m
+[0;32m2014-12-30 16:30:57 hadoop2 初始化检测 /etc/init.d/eyou_mail_memcache_hot 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_gearman 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_phpd 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_crtmpd 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_ecs_rstorage 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_ecs_wstorage 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_ecs_tracker 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_httpd 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_nginx 存在，退出.[0m
+[0;32m2014-12-30 16:30:58 hadoop2 初始化检测 /etc/init.d/eyou_mail_bounce 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_local 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_remote 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_mlist 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_smtp 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_pop 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_imap 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_cleanup 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mail_cron_etc 存在，退出.[0m
+[0;32m2014-12-30 16:30:59 hadoop2 初始化检测 /etc/init.d/eyou_mount 存在，退出.[0m
+[0;32m2014-12-30 16:31:00 hadoop2 初始化检测 /etc/init.d/eyou_check_network 存在，退出.[0m
+[0;32m2014-12-30 16:31:00 hadoop2 初始化检测 /etc/init.d/eyou_check_sendemail 存在，退出.[0m
+[0;32m2014-12-30 16:31:00 hadoop2 初始化检测 /etc/init.d/eyou_cron_corolog 存在，退出.[0m
+[0;31m2014-12-30 16:32:59 hadoop2 未找到PID 文件 [ mysql_log ][0m
+[0;31m2014-12-30 16:33:00 hadoop2 未找到PID 文件 [ mproxy ][0m
+[0;31m2014-12-30 16:33:02 hadoop2 未找到PID 文件 [ mproxy_index ][0m
+[0;31m2014-12-30 16:33:03 hadoop2 未找到PID 文件 [ memcache_session ][0m
+[0;31m2014-12-30 16:33:05 hadoop2 未找到PID 文件 [ memcache_fix ][0m
+[0;31m2014-12-30 16:33:06 hadoop2 未找到PID 文件 [ memcache_hot ][0m
+[0;31m2014-12-30 16:33:08 hadoop2 未找到PID 文件 [ gearman ][0m
+[0;31m2014-12-30 16:33:10 hadoop2 未找到PID 文件 [ phpd ][0m
+[0;31m2014-12-30 16:33:12 hadoop2 未找到PID 文件 [ crtmpd ][0m
+[0;31m2014-12-30 16:33:13 hadoop2 未找到PID 文件 [ ecs_rstorage ][0m
+[0;31m2014-12-30 16:33:15 hadoop2 未找到PID 文件 [ ecs_wstorage ][0m
+[0;31m2014-12-30 16:33:17 hadoop2 未找到PID 文件 [ ecs_tracker ][0m
+[0;31m2014-12-30 16:33:19 hadoop2 未找到PID 文件 [ httpd ][0m
+[0;31m2014-12-30 16:33:21 hadoop2 未找到PID 文件 [ nginx ][0m
+[0;31m2014-12-30 16:33:23 hadoop2 未找到PID 文件 [ bounce ][0m
+[0;31m2014-12-30 16:33:25 hadoop2 未找到PID 文件 [ local ][0m
+[0;31m2014-12-30 16:33:27 hadoop2 未找到PID 文件 [ remote ][0m
+[0;31m2014-12-30 16:33:29 hadoop2 未找到PID 文件 [ mlist ][0m
+[0;31m2014-12-30 16:33:31 hadoop2 未找到PID 文件 [ smtp ][0m
+[0;31m2014-12-30 16:33:33 hadoop2 未找到PID 文件 [ pop ][0m
+[0;31m2014-12-30 16:33:35 hadoop2 未找到PID 文件 [ imap ][0m
+[0;31m2014-12-30 16:33:38 hadoop2 未找到PID 文件 [ cleanup ][0m
+[0;31m2014-12-30 16:33:40 hadoop2 未找到PID 文件 [ cron_etc ][0m
+[0;32m2014-12-30 16:35:54 hadoop2 rsyslogd start [ 启动成功 ] [ OK ] DEBUG_ID: [ 2136 ][0m
+[0;31m2014-12-30 16:35:54 hadoop2 ecs_wstorage start [ 启动失败 ] [ ERROR ] DEBUG_ID: [ 1138 ][0m
+[0;32m2014-12-30 16:36:08 hadoop2 check 192.168.122.1 port [2049/nfs] is ok. [0m
+[0;32m2014-12-30 16:36:08 hadoop2 挂载磁盘192.168.122.1:/data1/net_data设备成功。[0m
+[0;32m2014-12-30 16:36:09 hadoop2 /net_data/.eyou_check_disk_time_31241_10550_25535_18878 文件不存在 跳过检查，将执行eyou服务启动动作.[0m
+[0;32m2014-12-30 16:36:07 hadoop2 ecs_wstorage stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 2566 ][0m
+[0;32m2014-12-30 16:36:12 hadoop2 crtmpd start [ 启动成功 ] [ OK ] DEBUG_ID: [ 1702 ][0m
+[0;32m2014-12-30 16:36:10 hadoop2 mysql start [ 启动成功 ] [ OK ] DEBUG_ID: [ 572 ][0m
+[0;32m2014-12-30 16:36:21 hadoop2 httpd start [ 启动成功 ] [ OK ] DEBUG_ID: [ 4024 ][0m
+[0;32m2014-12-30 16:36:12 hadoop2 mysql_index start [ 启动成功 ] [ OK ] DEBUG_ID: [ 2445 ][0m
+[0;32m2014-12-30 16:36:12 hadoop2 mysql_log start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3137 ][0m
+[0;32m2014-12-30 16:36:28 hadoop2 mproxy start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3919 ][0m
+[0;32m2014-12-30 16:36:30 hadoop2 memcache_session start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3264 ][0m
+[0;32m2014-12-30 16:36:30 hadoop2 mproxy_index start [ 启动成功 ] [ OK ] DEBUG_ID: [ 1376 ][0m
+[0;32m2014-12-30 16:36:30 hadoop2 memcache_fix start [ 启动成功 ] [ OK ] DEBUG_ID: [ 2747 ][0m
+[0;32m2014-12-30 16:36:35 hadoop2 memcache_hot start [ 启动成功 ] [ OK ] DEBUG_ID: [ 468 ][0m
+[0;32m2014-12-30 16:36:37 hadoop2 nginx start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3006 ][0m
+[0;32m2014-12-30 16:36:36 hadoop2 gearman start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3781 ][0m
+[0;32m2014-12-30 16:36:38 hadoop2 smtp start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3773 ][0m
+[0;32m2014-12-30 16:36:41 hadoop2 bounce start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3859 ][0m
+[0;32m2014-12-30 16:36:44 hadoop2 remote start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3154 ][0m
+[0;32m2014-12-30 16:36:43 hadoop2 local start [ 启动成功 ] [ OK ] DEBUG_ID: [ 711 ][0m
+[0;32m2014-12-30 16:36:43 hadoop2 phpd start [ 启动成功 ] [ OK ] DEBUG_ID: [ 507 ][0m
+[0;32m2014-12-30 16:36:52 hadoop2 mlist start [ 启动成功 ] [ OK ] DEBUG_ID: [ 2951 ][0m
+[0;32m2014-12-30 16:36:54 hadoop2 pop start [ 启动成功 ] [ OK ] DEBUG_ID: [ 3579 ][0m
+[0;32m2014-12-30 16:36:57 hadoop2 imap start [ 启动成功 ] [ OK ] DEBUG_ID: [ 1796 ][0m
+[0;32m2014-12-30 16:36:58 hadoop2 cleanup start [ 启动成功 ] [ OK ] DEBUG_ID: [ 2562 ][0m
+[0;32m2014-12-30 16:37:01 hadoop2 cron_etc start [ 启动成功 ] [ OK ] DEBUG_ID: [ 2851 ][0m
+[0;32m2014-12-30 16:37:07 hadoop2 邮件发送成功。[0m
+[0;32m2014-12-30 16:37:08 hadoop3 节点启动成功...	[0m
+[0;32m2014-12-30 16:37:09 hadoop3 节点，网络恢复..  [0m
+[0;32m2014-12-30 16:37:12 hadoop2 邮件发送成功。[0m
+[0;32m2014-12-30 16:37:58 hadoop2 httpd stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 2926 ][0m
+[0;32m2014-12-30 16:37:58 hadoop2 mproxy_index stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3882 ][0m
+[0;32m2014-12-30 16:37:58 hadoop2 crtmpd stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 367 ][0m
+[0;32m2014-12-30 16:37:58 hadoop2 phpd stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3404 ][0m
+[0;32m2014-12-30 16:38:07 hadoop2 nginx stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3619 ][0m
+[0;32m2014-12-30 16:38:07 hadoop2 bounce stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 1652 ][0m
+[0;32m2014-12-30 16:38:07 hadoop2 mysql_index stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3140 ][0m
+[0;32m2014-12-30 16:38:08 hadoop2 mysql_log stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 1349 ][0m
+[0;32m2014-12-30 16:38:12 hadoop2 gearman stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 731 ][0m
+[0;32m2014-12-30 16:38:13 hadoop2 local stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 2473 ][0m
+[0;32m2014-12-30 16:38:17 hadoop2 remote stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3856 ][0m
+[0;32m2014-12-30 16:38:17 hadoop2 mlist stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 865 ][0m
+[0;32m2014-12-30 16:38:18 hadoop2 smtp stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3058 ][0m
+[0;32m2014-12-30 16:38:18 hadoop2 pop stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3837 ][0m
+[0;32m2014-12-30 16:38:22 hadoop2 imap stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 1610 ][0m
+[0;32m2014-12-30 16:38:24 hadoop2 memcache_session stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 592 ][0m
+[0;32m2014-12-30 16:38:24 hadoop2 memcache_fix stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3418 ][0m
+[0;32m2014-12-30 16:38:24 hadoop2 memcache_hot stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3533 ][0m
+[0;32m2014-12-30 16:38:29 hadoop2 mproxy stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 3059 ][0m
+[0;32m2014-12-30 16:38:30 hadoop2 cleanup stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 1679 ][0m
+[0;32m2014-12-30 16:38:31 hadoop2 cron_etc stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 1120 ][0m
+[0;32m2014-12-30 16:38:34 hadoop2 mysql stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 1772 ][0m
+[0;32m2014-12-30 16:38:43 hadoop2 卸载磁盘192.168.122.1:/data1/net_data设备成功。[0m
+[0;31m2014-12-30 16:39:11 hadoop2 未找到PID 文件 [ ecs_wstorage ][0m
+[0;31m2014-12-30 16:39:27 hadoop2 ecs_wstorage start [ 启动失败 ] [ ERROR ] DEBUG_ID: [ 1573 ][0m
+[0;32m2014-12-30 16:39:40 hadoop2 ecs_wstorage stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 2446 ][0m
+[0;32m2014-12-30 16:40:00 hadoop2 rsyslogd stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 2547 ][0m

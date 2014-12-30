@@ -1,0 +1,691 @@
+2014-12-30 16:35:57 hadoop2 rsyslogd 2136 start
+2136 start Watching rsyslogd processes ...
+2136 start 
+2136 start Result:
+2136 start ------------------------------
+2136 start rsyslogd  [[0;32mOK[0m]  20176  rsyslogd---2*[{rsyslogd}]
+2136 start ------------------------------ 
+2014-12-30 16:36:07 hadoop2 ecs_wstorage 1138 start
+1138 start Watching ecs_wstorage processes ...
+1138 start 
+1138 start Result:
+1138 start ------------------------------
+1138 start ecs_wstorage  [[0;31mFAIL[0m]  can't find pid file.
+1138 start ------------------------------
+1138 start 
+1138 start Failing process status:
+1138 start ------------------------------
+1138 start   PID  PPID CMD
+1138 start ------------------------------ 
+2014-12-30 16:36:07 hadoop2 ecs_wstorage 1138 start
+1138 start 未找到PID 文件 [ ecs_wstorage ] 
+2014-12-30 16:36:07 hadoop2 ecs_wstorage 1138 start
+1138 start 进程ID文件不存在 [ ecs_wstorage ] 
+2014-12-30 16:36:10 hadoop2 ecs_wstorage 2566 stop
+2566 stop Watching ecs_wstorage processes ...
+2566 stop 
+2566 stop Result:
+2566 stop ------------------------------
+2566 stop ecs_wstorage  [[0;31mFAIL[0m]  can't find pid file.
+2566 stop ------------------------------
+2566 stop 
+2566 stop Failing process status:
+2566 stop ------------------------------
+2566 stop   PID  PPID CMD
+2566 stop ------------------------------ 
+2014-12-30 16:36:10 hadoop2 ecs_wstorage 2566 stop
+2566 stop eyou_mail stop ecs_wstorage number is 1 ... 
+2014-12-30 16:36:10 hadoop2 ecs_wstorage 2566 stop
+2566 stop 未找到PID 文件 [ ecs_wstorage ] 
+2014-12-30 16:36:11 hadoop2 ecs_wstorage 2566 stop
+2566 stop 进程ID文件不存在 [ ecs_wstorage ] 
+2014-12-30 16:36:11 hadoop2 ecs_wstorage 2566 stop
+2566 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:36:18 hadoop2 crtmpd 1702 start
+1702 start Watching crtmpd processes ...
+1702 start 
+1702 start Result:
+1702 start ------------------------------
+1702 start crtmpd  [[0;32mOK[0m]  22673  crtmpserver
+1702 start ------------------------------ 
+2014-12-30 16:36:25 hadoop2 mysql 572 start
+572 start Watching mysql processes ...
+572 start 
+572 start Result:
+572 start ------------------------------
+572 start mysql  [[0;32mOK[0m]  21905-23692  mysqld_safe---mysqld---21*[{mysqld}]
+572 start ------------------------------ 
+2014-12-30 16:36:25 hadoop2 httpd 4024 start
+4024 start Watching httpd processes ...
+4024 start 
+4024 start Result:
+4024 start ------------------------------
+4024 start httpd  [[0;32mOK[0m]  24697  httpd-+-2*[cronolog]
+4024 start                           `-5*[httpd]
+4024 start ------------------------------ 
+2014-12-30 16:36:27 hadoop2 mysql_index 2445 start
+2445 start Watching mysql_index processes ...
+2445 start 
+2445 start Result:
+2445 start ------------------------------
+2445 start mysql_index  [[0;32mOK[0m]  22364-24283  mysqld_safe---mysqld---21*[{mysqld}]
+2445 start ------------------------------ 
+2014-12-30 16:36:28 hadoop2 mysql_log 3137 start
+3137 start Watching mysql_log processes ...
+3137 start 
+3137 start Result:
+3137 start ------------------------------
+3137 start mysql_log  [[0;32mOK[0m]  22457-24373  mysqld_safe---mysqld---21*[{mysqld}]
+3137 start ------------------------------ 
+2014-12-30 16:36:33 hadoop2 mproxy 3919 start
+3919 start Watching mproxy processes ...
+3919 start 
+3919 start Result:
+3919 start ------------------------------
+3919 start mproxy  [[0;32mOK[0m]  26120  mysql-proxy
+3919 start ------------------------------ 
+2014-12-30 16:36:35 hadoop2 memcache_session 3264 start
+3264 start Watching memcache_session processes ...
+3264 start 
+3264 start Result:
+3264 start ------------------------------
+3264 start memcache_session  [[0;32mOK[0m]  26237  memcached---5*[{memcached}]
+3264 start ------------------------------ 
+2014-12-30 16:36:35 hadoop2 mproxy_index 1376 start
+1376 start Watching mproxy_index processes ...
+1376 start 
+1376 start Result:
+1376 start ------------------------------
+1376 start mproxy_index  [[0;32mOK[0m]  26272  mysql-proxy
+1376 start ------------------------------ 
+2014-12-30 16:36:37 hadoop2 memcache_fix 2747 start
+2747 start Watching memcache_fix processes ...
+2747 start 
+2747 start Result:
+2747 start ------------------------------
+2747 start memcache_fix  [[0;32mOK[0m]  26256  memcached---5*[{memcached}]
+2747 start ------------------------------ 
+2014-12-30 16:36:40 hadoop2 memcache_hot 468 start
+468 start Watching memcache_hot processes ...
+468 start 
+468 start Result:
+468 start ------------------------------
+468 start memcache_hot  [[0;32mOK[0m]  27471  memcached---5*[{memcached}]
+468 start ------------------------------ 
+2014-12-30 16:36:41 hadoop2 nginx 3006 start
+3006 start Watching nginx processes ...
+3006 start 
+3006 start Result:
+3006 start ------------------------------
+3006 start nginx  [[0;32mOK[0m]  27816  nginx---3*[nginx]
+3006 start ------------------------------ 
+2014-12-30 16:36:42 hadoop2 gearman 3781 start
+3781 start Watching gearman processes ...
+3781 start 
+3781 start Result:
+3781 start ------------------------------
+3781 start gearman  [[0;32mOK[0m]  27639  gearmand---6*[{gearmand}]
+3781 start ------------------------------ 
+2014-12-30 16:36:43 hadoop2 smtp 3773 start
+3773 start Watching smtp processes ...
+3773 start 
+3773 start Result:
+3773 start ------------------------------
+3773 start smtp  [[0;32mOK[0m]  28172  em_smtpd---8*[em_smtpd]
+3773 start ------------------------------ 
+2014-12-30 16:36:46 hadoop2 bounce 3859 start
+3859 start Watching bounce processes ...
+3859 start 
+3859 start Result:
+3859 start ------------------------------
+3859 start bounce  [[0;32mOK[0m]  29079  em_bounce---2*[em_bounce]
+3859 start ------------------------------ 
+2014-12-30 16:36:49 hadoop2 remote 3154 start
+3154 start Watching remote processes ...
+3154 start 
+3154 start Result:
+3154 start ------------------------------
+3154 start remote  [[0;32mOK[0m]  29424  em_remote---9*[em_remote]
+3154 start ------------------------------ 
+2014-12-30 16:36:49 hadoop2 local 711 start
+711 start Watching local processes ...
+711 start 
+711 start Result:
+711 start ------------------------------
+711 start local  [[0;32mOK[0m]  29439  em_local---5*[em_local]
+711 start ------------------------------ 
+2014-12-30 16:36:51 hadoop2 phpd 507 start
+507 start Watching phpd processes ...
+507 start 
+507 start Result:
+507 start ------------------------------
+507 start phpd  [[0;32mOK[0m]  29492  em_phpd-+-45*[em_phpd]
+507 start                            `-em_phpd---2*[cronolog]
+507 start ------------------------------ 
+2014-12-30 16:36:56 hadoop2 mlist 2951 start
+2951 start Watching mlist processes ...
+2951 start 
+2951 start Result:
+2951 start ------------------------------
+2951 start mlist  [[0;32mOK[0m]  30890  em_mlist---2*[em_mlist]
+2951 start ------------------------------ 
+2014-12-30 16:36:57 hadoop2 pop 3579 start
+3579 start Watching pop processes ...
+3579 start 
+3579 start Result:
+3579 start ------------------------------
+3579 start pop  [[0;32mOK[0m]  31020  em_pop3d---8*[em_pop3d]
+3579 start ------------------------------ 
+2014-12-30 16:37:00 hadoop2 imap 1796 start
+1796 start Watching imap processes ...
+1796 start 
+1796 start Result:
+1796 start ------------------------------
+1796 start imap  [[0;32mOK[0m]  31862  em_imapd---8*[em_imapd]
+1796 start ------------------------------ 
+2014-12-30 16:37:02 hadoop2 cleanup 2562 start
+2562 start Watching cleanup processes ...
+2562 start 
+2562 start Result:
+2562 start ------------------------------
+2562 start cleanup  [[0;32mOK[0m]  32053  em_cleanup---em_cleanup
+2562 start ------------------------------ 
+2014-12-30 16:37:05 hadoop2 cron_etc 2851 start
+2851 start Watching cron_etc processes ...
+2851 start 
+2851 start Result:
+2851 start ------------------------------
+2851 start cron_etc  [[0;32mOK[0m]  /etc/cron.d/eyou_mail is ok  
+2851 start ------------------------------ 
+2014-12-30 16:37:06 hadoop2 cron_etc 2851 start
+2851 start 成功 [ cron_etc ] 
+2014-12-30 16:37:07 hadoop2 cron_etc 3120 
+3120  成功 [ cron_etc ] 
+2014-12-30 16:38:04 hadoop2 crtmpd 367 stop
+367 stop Watching crtmpd processes ...
+367 stop 
+367 stop Result:
+367 stop ------------------------------
+367 stop crtmpd  [[0;31mFAIL[0m]  process not running.
+367 stop ------------------------------
+367 stop 
+367 stop Failing process status:
+367 stop ------------------------------
+367 stop   PID  PPID CMD
+367 stop ------------------------------ 
+2014-12-30 16:38:04 hadoop2 phpd 3404 stop
+2014-12-30 16:38:04 hadoop2 mproxy_index 3882 stop
+3404 stop Watching phpd processes ...
+3404 stop 
+3404 stop Result:
+3404 stop ------------------------------
+3404 stop phpd  [[0;31mFAIL[0m]  process not running.
+3404 stop ------------------------------
+3404 stop 
+3404 stop Failing process status:
+3404 stop ------------------------------
+3404 stop   PID  PPID CMD
+3404 stop ------------------------------ 
+3882 stop Watching mproxy_index processes ...
+3882 stop 
+3882 stop Result:
+3882 stop ------------------------------
+3882 stop mproxy_index  [[0;31mFAIL[0m]  process not running.
+3882 stop ------------------------------
+3882 stop 
+3882 stop Failing process status:
+3882 stop ------------------------------
+3882 stop   PID  PPID CMD
+3882 stop 26117     1 /usr/local/eyou/mail/opt/mproxy/libexec/mysql-proxy --keepalive --log-level=message --log-backtrace-on-crash --proxy-pool-no-change-user --basedir=/usr/local/eyou/mail/opt/mproxy --pid-file=/usr/local/eyou/mail/run/em_mproxy.pid --log-file=/usr/local/eyou/mail/log/mproxy/mproxy.log --proxy-lua-script=/usr/local/eyou/mail/etc/mproxy/mta_pooling.lua --proxy-address=127.0.0.1:3406 --proxy-backend-addresses=127.0.0.1:3306 --daemon
+3882 stop 26120 26117 /usr/local/eyou/mail/opt/mproxy/libexec/mysql-proxy --keepalive --log-level=message --log-backtrace-on-crash --proxy-pool-no-change-user --basedir=/usr/local/eyou/mail/opt/mproxy --pid-file=/usr/local/eyou/mail/run/em_mproxy.pid --log-file=/usr/local/eyou/mail/log/mproxy/mproxy.log --proxy-lua-script=/usr/local/eyou/mail/etc/mproxy/mta_pooling.lua --proxy-address=127.0.0.1:3406 --proxy-backend-addresses=127.0.0.1:3306 --daemon
+3882 stop ------------------------------ 
+2014-12-30 16:38:04 hadoop2 httpd 2926 stop
+2926 stop Watching httpd processes ...
+2926 stop 
+2926 stop Result:
+2926 stop ------------------------------
+2926 stop httpd  [[0;31mFAIL[0m]  can't find pid file.
+2926 stop ------------------------------
+2926 stop 
+2926 stop Failing process status:
+2926 stop ------------------------------
+2926 stop   PID  PPID CMD
+2926 stop ------------------------------ 
+2014-12-30 16:38:04 hadoop2 crtmpd 367 stop
+367 stop eyou_mail stop crtmpd number is 1 ... 
+2014-12-30 16:38:04 hadoop2 phpd 3404 stop
+2014-12-30 16:38:04 hadoop2 mproxy_index 3882 stop
+3404 stop eyou_mail stop phpd number is 1 ... 
+3882 stop eyou_mail stop mproxy_index number is 1 ... 
+2014-12-30 16:38:04 hadoop2 httpd 2926 stop
+2926 stop eyou_mail stop httpd number is 1 ... 
+2014-12-30 16:38:05 hadoop2 httpd 2926 stop
+2926 stop 未找到PID 文件 [ httpd ] 
+2014-12-30 16:38:06 hadoop2 httpd 2926 stop
+2926 stop 进程ID文件不存在 [ httpd ] 
+2014-12-30 16:38:06 hadoop2 crtmpd 367 stop
+367 stop 未查找到 22673 进程号对应的程序 [ crtmpd ] 
+2014-12-30 16:38:06 hadoop2 httpd 2926 stop
+2926 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:06 hadoop2 phpd 3404 stop
+3404 stop 未查找到 29492 进程号对应的程序 [ phpd ] 
+2014-12-30 16:38:06 hadoop2 mproxy_index 3882 stop
+3882 stop 未查找到 26272 进程号对应的程序 [ mproxy_index ] 
+2014-12-30 16:38:06 hadoop2 crtmpd 367 stop
+367 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:06 hadoop2 phpd 3404 stop
+3404 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:06 hadoop2 mproxy_index 3882 stop
+3882 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:09 hadoop2 cron_etc 2963 
+2963  成功 [ cron_etc ] 
+2014-12-30 16:38:11 hadoop2 nginx 3619 stop
+3619 stop Watching nginx processes ...
+3619 stop 
+3619 stop Result:
+3619 stop ------------------------------
+3619 stop nginx  [[0;31mFAIL[0m]  can't find pid file.
+3619 stop ------------------------------
+3619 stop 
+3619 stop Failing process status:
+3619 stop ------------------------------
+3619 stop   PID  PPID CMD
+3619 stop ------------------------------ 
+2014-12-30 16:38:11 hadoop2 nginx 3619 stop
+3619 stop eyou_mail stop nginx number is 1 ... 
+2014-12-30 16:38:11 hadoop2 bounce 1652 stop
+1652 stop Watching bounce processes ...
+1652 stop 
+1652 stop Result:
+1652 stop ------------------------------
+1652 stop bounce  [[0;31mFAIL[0m]  can't find pid file.
+1652 stop ------------------------------
+1652 stop 
+1652 stop Failing process status:
+1652 stop ------------------------------
+1652 stop   PID  PPID CMD
+1652 stop ------------------------------ 
+2014-12-30 16:38:11 hadoop2 nginx 3619 stop
+3619 stop 未找到PID 文件 [ nginx ] 
+2014-12-30 16:38:11 hadoop2 bounce 1652 stop
+1652 stop eyou_mail stop bounce number is 1 ... 
+2014-12-30 16:38:11 hadoop2 nginx 3619 stop
+3619 stop 进程ID文件不存在 [ nginx ] 
+2014-12-30 16:38:12 hadoop2 bounce 1652 stop
+1652 stop 未找到PID 文件 [ bounce ] 
+2014-12-30 16:38:12 hadoop2 nginx 3619 stop
+3619 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:12 hadoop2 bounce 1652 stop
+1652 stop 进程ID文件不存在 [ bounce ] 
+2014-12-30 16:38:12 hadoop2 bounce 1652 stop
+1652 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:14 hadoop2 mysql_index 3140 stop
+3140 stop Watching mysql_index processes ...
+3140 stop 
+3140 stop Result:
+3140 stop ------------------------------
+3140 stop mysql_index  [[0;31mFAIL[0m]  can't find pid file.
+3140 stop ------------------------------
+3140 stop 
+3140 stop Failing process status:
+3140 stop ------------------------------
+3140 stop   PID  PPID CMD
+3140 stop 21905 21885 /bin/sh ./bin/mysqld_safe --defaults-file=/usr/local/eyou/mail/etc/mysql/my.cnf
+3140 stop 23692 21905 /usr/local/eyou/mail/opt/mysql/bin/mysqld --defaults-file=/usr/local/eyou/mail/etc/mysql/my.cnf --basedir=/usr/local/eyou/mail/opt/mysql --datadir=/usr/local/eyou/mail/data/mysql --plugin-dir=/usr/local/eyou/mail/opt/mysql/lib/plugin --log-error=/usr/local/eyou/mail/data/mysql/hadoop2.err --pid-file=/usr/local/eyou/mail/run/em_mysql.pid --socket=/usr/local/eyou/mail/run/em_mysql.sock --port=3306
+3140 stop ------------------------------ 
+2014-12-30 16:38:15 hadoop2 mysql_index 3140 stop
+3140 stop eyou_mail stop mysql_index number is 1 ... 
+2014-12-30 16:38:15 hadoop2 mysql_log 1349 stop
+1349 stop Watching mysql_log processes ...
+1349 stop 
+1349 stop Result:
+1349 stop ------------------------------
+1349 stop mysql_log  [[0;31mFAIL[0m]  can't find pid file.
+1349 stop ------------------------------
+1349 stop 
+1349 stop Failing process status:
+1349 stop ------------------------------
+1349 stop   PID  PPID CMD
+1349 stop 21905 21885 /bin/sh ./bin/mysqld_safe --defaults-file=/usr/local/eyou/mail/etc/mysql/my.cnf
+1349 stop 23692 21905 /usr/local/eyou/mail/opt/mysql/bin/mysqld --defaults-file=/usr/local/eyou/mail/etc/mysql/my.cnf --basedir=/usr/local/eyou/mail/opt/mysql --datadir=/usr/local/eyou/mail/data/mysql --plugin-dir=/usr/local/eyou/mail/opt/mysql/lib/plugin --log-error=/usr/local/eyou/mail/data/mysql/hadoop2.err --pid-file=/usr/local/eyou/mail/run/em_mysql.pid --socket=/usr/local/eyou/mail/run/em_mysql.sock --port=3306
+1349 stop ------------------------------ 
+2014-12-30 16:38:15 hadoop2 mysql_index 3140 stop
+3140 stop 未找到PID 文件 [ mysql_index ] 
+2014-12-30 16:38:15 hadoop2 gearman 731 stop
+731 stop Watching gearman processes ...
+731 stop 
+731 stop Result:
+731 stop ------------------------------
+731 stop gearman  [[0;31mFAIL[0m]  can't find pid file.
+731 stop ------------------------------
+731 stop 
+731 stop Failing process status:
+731 stop ------------------------------
+731 stop   PID  PPID CMD
+731 stop ------------------------------ 
+2014-12-30 16:38:15 hadoop2 mysql_log 1349 stop
+1349 stop eyou_mail stop mysql_log number is 1 ... 
+2014-12-30 16:38:15 hadoop2 local 2473 stop
+2014-12-30 16:38:15 hadoop2 mysql_index 3140 stop
+2473 stop Watching local processes ...
+2473 stop 
+2473 stop Result:
+2473 stop ------------------------------
+2473 stop local  [[0;31mFAIL[0m]  can't find pid file.
+2473 stop ------------------------------
+2473 stop 
+2473 stop Failing process status:
+2473 stop ------------------------------
+2473 stop   PID  PPID CMD
+2473 stop ------------------------------ 
+3140 stop 进程ID文件不存在 [ mysql_index ] 
+2014-12-30 16:38:15 hadoop2 gearman 731 stop
+731 stop eyou_mail stop gearman number is 1 ... 
+2014-12-30 16:38:16 hadoop2 mysql_log 1349 stop
+1349 stop 未找到PID 文件 [ mysql_log ] 
+2014-12-30 16:38:16 hadoop2 local 2473 stop
+2014-12-30 16:38:16 hadoop2 mysql_index 3140 stop
+2473 stop eyou_mail stop local number is 1 ... 
+3140 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:16 hadoop2 gearman 731 stop
+731 stop 未找到PID 文件 [ gearman ] 
+2014-12-30 16:38:16 hadoop2 mysql_log 1349 stop
+1349 stop 进程ID文件不存在 [ mysql_log ] 
+2014-12-30 16:38:16 hadoop2 local 2473 stop
+2473 stop 未找到PID 文件 [ local ] 
+2014-12-30 16:38:16 hadoop2 gearman 731 stop
+731 stop 进程ID文件不存在 [ gearman ] 
+2014-12-30 16:38:17 hadoop2 mysql_log 1349 stop
+1349 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:17 hadoop2 local 2473 stop
+2473 stop 进程ID文件不存在 [ local ] 
+2014-12-30 16:38:17 hadoop2 gearman 731 stop
+731 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:17 hadoop2 local 2473 stop
+2473 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:20 hadoop2 remote 3856 stop
+3856 stop Watching remote processes ...
+3856 stop 
+3856 stop Result:
+3856 stop ------------------------------
+3856 stop remote  [[0;31mFAIL[0m]  can't find pid file.
+3856 stop ------------------------------
+3856 stop 
+3856 stop Failing process status:
+3856 stop ------------------------------
+3856 stop   PID  PPID CMD
+3856 stop ------------------------------ 
+2014-12-30 16:38:20 hadoop2 remote 3856 stop
+3856 stop eyou_mail stop remote number is 1 ... 
+2014-12-30 16:38:20 hadoop2 remote 3856 stop
+3856 stop 未找到PID 文件 [ remote ] 
+2014-12-30 16:38:21 hadoop2 remote 3856 stop
+3856 stop 进程ID文件不存在 [ remote ] 
+2014-12-30 16:38:21 hadoop2 mlist 865 stop
+865 stop Watching mlist processes ...
+865 stop 
+865 stop Result:
+865 stop ------------------------------
+865 stop mlist  [[0;31mFAIL[0m]  can't find pid file.
+865 stop ------------------------------
+865 stop 
+865 stop Failing process status:
+865 stop ------------------------------
+865 stop   PID  PPID CMD
+865 stop ------------------------------ 
+2014-12-30 16:38:21 hadoop2 remote 3856 stop
+3856 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:21 hadoop2 mlist 865 stop
+865 stop eyou_mail stop mlist number is 1 ... 
+2014-12-30 16:38:22 hadoop2 smtp 3058 stop
+3058 stop Watching smtp processes ...
+3058 stop 
+3058 stop Result:
+3058 stop ------------------------------
+3058 stop smtp  [[0;31mFAIL[0m]  can't find pid file.
+3058 stop ------------------------------
+3058 stop 
+3058 stop Failing process status:
+3058 stop ------------------------------
+3058 stop   PID  PPID CMD
+3058 stop ------------------------------ 
+2014-12-30 16:38:22 hadoop2 pop 3837 stop
+3837 stop Watching pop processes ...
+3837 stop 
+3837 stop Result:
+3837 stop ------------------------------
+3837 stop pop  [[0;31mFAIL[0m]  can't find pid file.
+3837 stop ------------------------------
+3837 stop 
+3837 stop Failing process status:
+3837 stop ------------------------------
+3837 stop   PID  PPID CMD
+3837 stop ------------------------------ 
+2014-12-30 16:38:22 hadoop2 mlist 865 stop
+865 stop 未找到PID 文件 [ mlist ] 
+2014-12-30 16:38:22 hadoop2 smtp 3058 stop
+2014-12-30 16:38:22 hadoop2 pop 3837 stop
+3058 stop eyou_mail stop smtp number is 1 ... 
+3837 stop eyou_mail stop pop number is 1 ... 
+2014-12-30 16:38:22 hadoop2 mlist 865 stop
+865 stop 进程ID文件不存在 [ mlist ] 
+2014-12-30 16:38:22 hadoop2 smtp 3058 stop
+3058 stop 未找到PID 文件 [ smtp ] 
+2014-12-30 16:38:22 hadoop2 pop 3837 stop
+3837 stop 未找到PID 文件 [ pop ] 
+2014-12-30 16:38:23 hadoop2 mlist 865 stop
+865 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:23 hadoop2 smtp 3058 stop
+3058 stop 进程ID文件不存在 [ smtp ] 
+2014-12-30 16:38:23 hadoop2 pop 3837 stop
+3837 stop 进程ID文件不存在 [ pop ] 
+2014-12-30 16:38:23 hadoop2 smtp 3058 stop
+3058 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:24 hadoop2 pop 3837 stop
+3837 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:26 hadoop2 imap 1610 stop
+1610 stop Watching imap processes ...
+1610 stop 
+1610 stop Result:
+1610 stop ------------------------------
+1610 stop imap  [[0;31mFAIL[0m]  can't find pid file.
+1610 stop ------------------------------
+1610 stop 
+1610 stop Failing process status:
+1610 stop ------------------------------
+1610 stop   PID  PPID CMD
+1610 stop ------------------------------ 
+2014-12-30 16:38:27 hadoop2 imap 1610 stop
+1610 stop eyou_mail stop imap number is 1 ... 
+2014-12-30 16:38:27 hadoop2 imap 1610 stop
+1610 stop 未找到PID 文件 [ imap ] 
+2014-12-30 16:38:27 hadoop2 memcache_session 592 stop
+592 stop Watching memcache_session processes ...
+592 stop 
+592 stop Result:
+592 stop ------------------------------
+592 stop memcache_session  [[0;31mFAIL[0m]  process not running.
+592 stop ------------------------------
+592 stop 
+592 stop Failing process status:
+592 stop ------------------------------
+592 stop   PID  PPID CMD
+592 stop ------------------------------ 
+2014-12-30 16:38:27 hadoop2 imap 1610 stop
+1610 stop 进程ID文件不存在 [ imap ] 
+2014-12-30 16:38:28 hadoop2 memcache_session 592 stop
+2014-12-30 16:38:28 hadoop2 imap 1610 stop
+592 stop eyou_mail stop memcache_session number is 1 ... 
+1610 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:28 hadoop2 memcache_fix 3418 stop
+3418 stop Watching memcache_fix processes ...
+3418 stop 
+3418 stop Result:
+3418 stop ------------------------------
+3418 stop memcache_fix  [[0;31mFAIL[0m]  process not running.
+3418 stop ------------------------------
+3418 stop 
+3418 stop Failing process status:
+3418 stop ------------------------------
+3418 stop   PID  PPID CMD
+3418 stop ------------------------------ 
+2014-12-30 16:38:28 hadoop2 memcache_hot 3533 stop
+3533 stop Watching memcache_hot processes ...
+3533 stop 
+3533 stop Result:
+3533 stop ------------------------------
+3533 stop memcache_hot  [[0;31mFAIL[0m]  process not running.
+3533 stop ------------------------------
+3533 stop 
+3533 stop Failing process status:
+3533 stop ------------------------------
+3533 stop   PID  PPID CMD
+3533 stop ------------------------------ 
+2014-12-30 16:38:28 hadoop2 memcache_fix 3418 stop
+3418 stop eyou_mail stop memcache_fix number is 1 ... 
+2014-12-30 16:38:29 hadoop2 memcache_hot 3533 stop
+3533 stop eyou_mail stop memcache_hot number is 1 ... 
+2014-12-30 16:38:29 hadoop2 memcache_session 592 stop
+592 stop 未查找到 26237 进程号对应的程序 [ memcache_session ] 
+2014-12-30 16:38:29 hadoop2 memcache_session 592 stop
+592 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:30 hadoop2 memcache_fix 3418 stop
+3418 stop 未查找到 26256 进程号对应的程序 [ memcache_fix ] 
+2014-12-30 16:38:30 hadoop2 memcache_hot 3533 stop
+3533 stop 未查找到 27471 进程号对应的程序 [ memcache_hot ] 
+2014-12-30 16:38:30 hadoop2 memcache_fix 3418 stop
+3418 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:30 hadoop2 memcache_hot 3533 stop
+3533 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:32 hadoop2 mproxy 3059 stop
+3059 stop Watching mproxy processes ...
+3059 stop 
+3059 stop Result:
+3059 stop ------------------------------
+3059 stop mproxy  [[0;31mFAIL[0m]  process not running.
+3059 stop ------------------------------
+3059 stop 
+3059 stop Failing process status:
+3059 stop ------------------------------
+3059 stop   PID  PPID CMD
+3059 stop ------------------------------ 
+2014-12-30 16:38:32 hadoop2 mproxy 3059 stop
+3059 stop eyou_mail stop mproxy number is 1 ... 
+2014-12-30 16:38:33 hadoop2 mproxy 3059 stop
+3059 stop 未查找到 26120 进程号对应的程序 [ mproxy ] 
+2014-12-30 16:38:34 hadoop2 mproxy 3059 stop
+3059 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:34 hadoop2 cleanup 1679 stop
+1679 stop Watching cleanup processes ...
+1679 stop 
+1679 stop Result:
+1679 stop ------------------------------
+1679 stop cleanup  [[0;31mFAIL[0m]  process not running.
+1679 stop ------------------------------
+1679 stop 
+1679 stop Failing process status:
+1679 stop ------------------------------
+1679 stop   PID  PPID CMD
+1679 stop ------------------------------ 
+2014-12-30 16:38:34 hadoop2 cron_etc 1120 stop
+1120 stop Watching cron_etc processes ...
+1120 stop 
+1120 stop Result:
+1120 stop ------------------------------
+1120 stop cron_etc  [[0;31mFAIL[0m]  can not find /etc/cron.d/eyou_mail
+1120 stop ------------------------------
+1120 stop 
+1120 stop Failing process status:
+1120 stop ------------------------------
+1120 stop   PID  PPID CMD
+1120 stop ------------------------------ 
+2014-12-30 16:38:34 hadoop2 cleanup 1679 stop
+1679 stop eyou_mail stop cleanup number is 1 ... 
+2014-12-30 16:38:34 hadoop2 cron_etc 1120 stop
+1120 stop eyou_mail stop cron_etc number is 1 ... 
+2014-12-30 16:38:35 hadoop2 cron_etc 1120 stop
+1120 stop 未找到PID 文件 [ cron_etc ] 
+2014-12-30 16:38:35 hadoop2 cron_etc 1120 stop
+1120 stop 失败 [ cron_etc ] 
+2014-12-30 16:38:35 hadoop2 cleanup 1679 stop
+2014-12-30 16:38:35 hadoop2 cron_etc 1120 stop
+1679 stop 未查找到 32053 进程号对应的程序 [ cleanup ] 
+1120 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:36 hadoop2 cleanup 1679 stop
+1679 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:38:41 hadoop2 mysql 1772 stop
+1772 stop Watching mysql processes ...
+1772 stop 
+1772 stop Result:
+1772 stop ------------------------------
+1772 stop mysql  [[0;31mFAIL[0m]  can't find pid file.
+1772 stop ------------------------------
+1772 stop 
+1772 stop Failing process status:
+1772 stop ------------------------------
+1772 stop   PID  PPID CMD
+1772 stop ------------------------------ 
+2014-12-30 16:38:41 hadoop2 mysql 1772 stop
+1772 stop eyou_mail stop mysql number is 1 ... 
+2014-12-30 16:38:41 hadoop2 mysql 1772 stop
+1772 stop 未找到PID 文件 [ mysql ] 
+2014-12-30 16:38:41 hadoop2 mysql 1772 stop
+1772 stop 进程ID文件不存在 [ mysql ] 
+2014-12-30 16:38:41 hadoop2 mysql 1772 stop
+1772 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:39:39 hadoop2 ecs_wstorage 1573 start
+1573 start Watching ecs_wstorage processes ...
+1573 start 
+1573 start Result:
+1573 start ------------------------------
+1573 start ecs_wstorage  [[0;31mFAIL[0m]  can't find pid file.
+1573 start ------------------------------
+1573 start 
+1573 start Failing process status:
+1573 start ------------------------------
+1573 start   PID  PPID CMD
+1573 start ------------------------------ 
+2014-12-30 16:39:39 hadoop2 ecs_wstorage 1573 start
+1573 start 未找到PID 文件 [ ecs_wstorage ] 
+2014-12-30 16:39:40 hadoop2 ecs_wstorage 1573 start
+1573 start 进程ID文件不存在 [ ecs_wstorage ] 
+2014-12-30 16:39:42 hadoop2 ecs_wstorage 2446 stop
+2446 stop Watching ecs_wstorage processes ...
+2446 stop 
+2446 stop Result:
+2446 stop ------------------------------
+2446 stop ecs_wstorage  [[0;31mFAIL[0m]  can't find pid file.
+2446 stop ------------------------------
+2446 stop 
+2446 stop Failing process status:
+2446 stop ------------------------------
+2446 stop   PID  PPID CMD
+2446 stop ------------------------------ 
+2014-12-30 16:39:42 hadoop2 ecs_wstorage 2446 stop
+2446 stop eyou_mail stop ecs_wstorage number is 1 ... 
+2014-12-30 16:39:42 hadoop2 ecs_wstorage 2446 stop
+2446 stop 未找到PID 文件 [ ecs_wstorage ] 
+2014-12-30 16:39:42 hadoop2 ecs_wstorage 2446 stop
+2446 stop 进程ID文件不存在 [ ecs_wstorage ] 
+2014-12-30 16:39:43 hadoop2 ecs_wstorage 2446 stop
+2446 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
+2014-12-30 16:40:02 hadoop2 rsyslogd 2547 stop
+2547 stop Watching rsyslogd processes ...
+2547 stop 
+2547 stop Result:
+2547 stop ------------------------------
+2547 stop rsyslogd  [[0;31mFAIL[0m]  can't find pid file.
+2547 stop ------------------------------
+2547 stop 
+2547 stop Failing process status:
+2547 stop ------------------------------
+2547 stop   PID  PPID CMD
+2547 stop ------------------------------ 
+2014-12-30 16:40:02 hadoop2 rsyslogd 2547 stop
+2547 stop eyou_mail stop rsyslogd number is 1 ... 
+2014-12-30 16:40:02 hadoop2 rsyslogd 2547 stop
+2547 stop 未找到PID 文件 [ rsyslogd ] 
+2014-12-30 16:40:03 hadoop2 rsyslogd 2547 stop
+2547 stop 进程ID文件不存在 [ rsyslogd ] 
+2014-12-30 16:40:03 hadoop2 rsyslogd 2547 stop
+2547 stop 停止 程序过程 检测程序状失败，正常现象关闭程序。 
