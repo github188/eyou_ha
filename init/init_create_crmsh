@@ -20,33 +20,19 @@ HA_TMP="$HA_DIR/tmp"
 	exit 1
 	}
 DISK_SCAN_CHECK
-[ -z $DISK_TYPE ] && {
-	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化参数 DISK_TYPE 参数为空" | $HA_MESSAGE ERR INIT
-	exit 1
-	}
-[ -z $DISK_NUM ] && {
-	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化参数 DISK_NUM 参数为空" | $HA_MESSAGE ERR INIT
-	exit 1
-	}
-[ -z "$DISK_MOUNT_1" ] && {
-	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化参数 DISK_MOUNT_1 参数为空" |$HA_MESSAGE ERR INIT 
-	exit 1
-	}
 
-[ -z $EMAIL_VIP ] && {
-	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化参数 EMAIL_VIP 参数为空" | $HA_MESSAGE ERR INIT
-	exit 1
-	}
+for i in EMAIL_SJ EMAIL_VIP EMAIL_VIP_DEV EMAIL_VIP_NET EMAIL_SER_N HA_PING_GW SSH_PORT CHECK_SEND_MESSAGE EMAIL_SERVER FROM FROM_PASS TO EYOU_NETWORK_CHECK EYOU_DISK_XT_STATUS EYOU_DISK_NFS_XT DISK_NUM DISK_MOUNT_1 HA_SERVER
+do
+test_i="$(eval echo \$${i})"
+[ -z "${test_i}" ] && {
+        echo "$(date +'%F %H:%M:%S') $(hostname) 初始化参数 $i 参数为空" | $HA_MESSAGE ERR INIT
+        exit 1
+        }
+echo $test_i
+done
+unset i
+unset test_i
 
-[ -z $HA_PING_GW ] && {
-	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化参数 HA_PING_GW 参数为空" | $HA_MESSAGE ERR INIT 
-	exit 1
-	}
-
-[ -z $HA_SERVER ] && {
-	echo "$(date +'%F %H:%M:%S') $(hostname) 初始化参数 HA_SERVER 参数为空" | $HA_MESSAGE ERR INIT 
-	exit 1
-	}
 
 CONFIG_FILE="/usr/local/eyou/mail/etc/em_init_config"
 [ -f $CONFIG_FILE ] && . $CONFIG_FILE || exit 123
