@@ -35,7 +35,13 @@ unset test_i
 
 
 CONFIG_FILE="/usr/local/eyou/mail/etc/em_init_config"
-[ -f $CONFIG_FILE ] && . $CONFIG_FILE || exit 123
+if [ ${HA_SERVER} != "gateway" ] && [ -f $CONFIG_FILE ];then
+ . $CONFIG_FILE 
+elif [ ${HA_SERVER} == "gateway" ];then
+	:
+else
+ exit 123
+fi
 
 [ -f $HA_TEMP/crmsh ] && mv $HA_TEMP/crmsh $HA_TEMP/crmsh.$(date +%F).$(date +%s).old
 
