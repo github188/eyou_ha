@@ -1,4 +1,0 @@
-<span style="color:#FF0000;">2014-12-30 16:39:11 hadoop2 未找到PID 文件 [ ecs_wstorage ]</span><br />
-<span style="color:#FF0000;">2014-12-30 16:39:27 hadoop2 ecs_wstorage start [ 启动失败 ] [ ERROR ] DEBUG_ID: [ 1573 ]</span><br />
-<span style="color:#000080;">2014-12-30 16:39:40 hadoop2 ecs_wstorage stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 2446 ]</span><br />
-<span style="color:#000080;">2014-12-30 16:40:00 hadoop2 rsyslogd stop [ 停止成功 ] [ OK ] DEBUG_ID: [ 2547 ]</span><br />

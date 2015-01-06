@@ -1,1 +1,0 @@
-<span style="color:#000080;">2014-12-30 16:38:43 hadoop2 卸载磁盘192.168.122.1:/data1/net_data设备成功。</span><br />
