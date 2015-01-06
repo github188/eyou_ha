@@ -171,6 +171,10 @@ YOU_NODE_NUMBER=$($HA_SSH_ENV "crm status|grep Node|cut -d ' ' -f1")
 
 echo "正在 生成crm 配置文件。。"
 $HA_INIT/init_create_crmsh
+[ $? -eq 0 ] || {
+	echo "初始化生成crm  失败，详细请见日志。。"
+	exit 3
+}
 echo "初始化本机 HA 需要的程序。。"
 $HA_INIT/init_create_eyou_shell
 [ $? -eq 0 ] && {
