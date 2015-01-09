@@ -517,3 +517,6 @@ sysconfig_crm >>$HA_TEMP/crmsh
 	eyou_clo_lo >>$HA_TEMP/crmsh
 	gateway_crm >>$HA_TEMP/crmsh
 	}
+
+
+exit 0

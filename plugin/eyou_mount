@@ -85,7 +85,7 @@ mount_disk () {
 
 check_mount_disk () {
 
-for i in ${DISK_NUM}
+for i in `seq ${DISK_NUM}`
 do
         DISK_DEV=$(eval echo \${DISK_MOUNT_${i}}|cut -d ',' -f1)
 	if [ $(echo ${DISK_DEV}|grep '^-U'|wc -l) -ne "0" ];then
