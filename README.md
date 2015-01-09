@@ -3,7 +3,7 @@
 </div><div>modfiy 2014 12 30</div><div>by: liguopeng@eyou.net &nbsp;mailbad@163.com</div><div><<br>
 </div><div>更新版本 &nbsp;仅限 update version corosync 1.4.7 pacemaker 1.1.12 crmsh 2.1</div><<br>
 <div>架构图</div><<br>
-<div>![image](https://github.com/mailbad/eyou_ha/blob/master/init/ha.png)</dir><<br>
+![image](https://github.com/mailbad/eyou_ha/blob/master/init/ha.png)
 <div>小BUG修复。</div><div>update gateway only install.</div><div>==========================</div><div><<br>
 </div><div><<br>
 </div><div><<br>
