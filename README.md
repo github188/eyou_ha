@@ -25,7 +25,7 @@ corosync 心跳模式
 默认日志存放 ./log/ha.日期.log
 
 
-./init		初始化目录。
+./init		初始化目录。\r
 ./plugin	会链接到/etc/init.d/ 下 ，使pacemaker 可以调用。
 ./sbin		plugin下程序会进行调用。
 ./tmp		临时目录。
