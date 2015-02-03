@@ -34,9 +34,9 @@ fi
 mount_disk () {
 	if [ ${1} == "mount" ];then
 		if [ "$(eval echo \${DISK_MOUNT_${i}}|cut -d ',' -f1|grep ':'|wc -l)" -ne "0" ];then
-			timeout 5 mount -t ${DISK_TYPE} -o tcp,nolock,rw ${DISK_DEV} ${DISK_DIR}
+			timeout -s 9 5 mount -t ${DISK_TYPE} -o tcp,nolock,rw ${DISK_DEV} ${DISK_DIR}
 		else
-			timeout 5 mount -t ${DISK_TYPE} ${DISK_DEV} ${DISK_DIR}
+			timeout -s 9 5 mount -t ${DISK_TYPE} ${DISK_DEV} ${DISK_DIR}
 	
 		fi
 			if [ ${?} -eq "0" ];then
@@ -47,7 +47,7 @@ mount_disk () {
 			exit_val="1"
 			fi
 	elif [ ${1} == "umount" ];then
-			timeout 5 umount ${DISK_DIR}
+			timeout -s 9 5 umount ${DISK_DIR}
 			if [ ${?} -eq "0" ];then
 			echo "$(date +%'F %H:%M:%S') $(hostname) 卸载磁盘${DISK_DEV}设备成功。" | $HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF
 			exit_val="0"
@@ -55,7 +55,7 @@ mount_disk () {
 				SYSTEM=$(cat /etc/issue|grep -Ei 'redhat|centos' |grep -o [0-9]\.[0-9])
 				 [[ $SYSTEM =~ 6 ]] && {
 				echo "$(date +%'F %H:%M:%S') $(hostname) 正常卸载磁盘${DISK_DEV}设备失败，使用fuser -k来进行释放设备。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
-				timeout 5 fuser -k ${DISK_DIR} && umount ${DISK_DIR}
+				timeout -s 9 5 fuser -k ${DISK_DIR} && umount ${DISK_DIR}
 				}
 				 [[ $SYSTEM =~ 5 ]] && {
 				echo "$(date +%'F %H:%M:%S') $(hostname) 正常卸载磁盘${DISK_DEV}设备失败，使用fuser -k来进行释放设备。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
@@ -73,7 +73,7 @@ mount_disk () {
 			fi
 			
 	elif [ ${1} == "check" ];then
-			timeout 5 touch ${DISK_DIR}/.check_eyou_ha_disk_$(hostname) && timeout 5 rm -rf ${DISK_DIR}/.check_eyou_ha_disk_$(hostname)
+			timeout -s 9 5 touch ${DISK_DIR}/.check_eyou_ha_disk_$(hostname) && timeout -s 9 5 rm -rf ${DISK_DIR}/.check_eyou_ha_disk_$(hostname)
 			[ ${?} -eq "0" ] || {
 				echo "$(date +%'F %H:%M:%S') $(hostname) 检测磁盘，创建${DISK_DIR}/.check_eyou_ha_disk_$(hostname) 失败。" | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
 				exit_val="1"
