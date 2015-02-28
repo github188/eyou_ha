@@ -61,7 +61,7 @@ wait;
 
 echo "
 crm configure primitive eyou_mount_disk lsb:eyou_mount \
-	op monitor interval=5s timeout=15s \
+	op monitor interval=60s timeout=60s \
 	meta migration-threshold=2 resource-stickiness=10
 "
 echo "wait;"
