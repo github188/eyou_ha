@@ -11,6 +11,9 @@ HA_TEMP="$HA_DIR/template"
 HA_TMP="$HA_DIR/tmp"
 HA_INIT="$HA_DIR/init"
 
+[ "$1" != "YeS" ] && exit 0
+
+
 crm resource stop eyou_mount_disk
 wait
 crm resource stop eyou_mail_vip
