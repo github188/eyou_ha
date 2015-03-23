@@ -24,14 +24,21 @@ pid_name="$(basename $0).pid"
 case $1 in
 	start)
 		touch $HA_RUN/$pid_name
+        echo "$(date +'%F %H:%M:%S') $(hostname) eyou_check_network 启动成功"|$HA_LOG OK
 		exit 0;
 	;;
 	stop)
 		rm -rf $HA_RUN/$pid_name
+        echo "$(date +'%F %H:%M:%S') $(hostname) eyou_check_network 停止成功"|$HA_LOG ERR
 		exit 0;
 	;;
 	status)
-		[ -f $HA_RUN/$pid_name ] && exit 0 || exit 1
+		if [ -f $HA_RUN/$pid_name ];then
+            exit 0 
+        else
+            echo "$(date +'%F %H:%M:%S') $(hostname) eyou_check_network 检测状态  未发现文件状态"|$HA_LOG ERR
+            exit 1
+        fi
 	;;
 	*)
 		echo "$0 为中间件程序 "

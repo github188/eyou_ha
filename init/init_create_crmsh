@@ -75,7 +75,7 @@ echo "wait;"
 echo "
 crm configure primitive eyou_mail_vip ocf:heartbeat:IPaddr2 params ip=$EMAIL_VIP nic=$EMAIL_VIP_DEV cidr_netmask=$EMAIL_VIP_NET op monitor interval=30s
 wait;
-crm configure primitive pingd ocf:pacemaker:ping params host_list=$HA_PING_GW multiplier=100 name=pingd op monitor interval=15s timeout=60s
+crm configure primitive pingd ocf:pacemaker:ping params host_list=$HA_PING_GW multiplier=100 dampen=5s name=pingd op monitor interval=15s timeout=60s
 wait;
 "
 #echo '
