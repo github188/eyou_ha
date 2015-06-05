@@ -51,10 +51,8 @@ check_time_disk_1=$(crm configure show xml |grep eyou_mount_disk|grep monitor|aw
 check_time_disk=$(echo "${check_time_disk_1}"-5|bc)
 
 #lgp_add seek=b
-#	if [ "$(head -1 $CHECK_FILE|awk '{print $1}')" != "1" ];then CHECK_TIME > $EYOU_CHECK_DISK_XT 2>/dev/null;dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 >/dev/null 2>&1
-;echo "$(date +%'F %H:%M:%S') $(hostname) ${EYOU_DISK_XT} 内容非标准 跳过检查 ，将执行mount动作"|$HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF; exit_val=0; else exit_val=1;fi
-	if [ "$(head -1 $CHECK_FILE|awk '{print $1}')" != "1" ];then CHECK_TIME > $EYOU_CHECK_DISK_XT 2>/dev/null;dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 seek=b >/dev/nu
-ll 2>&1;echo "$(date +%'F %H:%M:%S') $(hostname) ${EYOU_DISK_XT} 内容非标准 跳过检查 ，将执行mount动作"|$HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF; exit_val=0; else exit_val=1;fi
+#	if [ "$(head -1 $CHECK_FILE|awk '{print $1}')" != "1" ];then CHECK_TIME > $EYOU_CHECK_DISK_XT 2>/dev/null;dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 >/dev/null 2>&1;echo "$(date +%'F %H:%M:%S') $(hostname) ${EYOU_DISK_XT} 内容非标准 跳过检查 ，将执行mount动作"|$HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF; exit_val=0; else exit_val=1;fi
+	if [ "$(head -1 $CHECK_FILE|awk '{print $1}')" != "1" ];then CHECK_TIME > $EYOU_CHECK_DISK_XT 2>/dev/null;dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 seek=b >/dev/null 2>&1;echo "$(date +%'F %H:%M:%S') $(hostname) ${EYOU_DISK_XT} 内容非标准 跳过检查 ，将执行mount动作"|$HA_MESSAGE OK DISK $CHECK_DISK_SCAN_CONF; exit_val=0; else exit_val=1;fi
 	if [ $exit_val == "1" ];then
 
 		#lgp_add skip=b
@@ -124,10 +122,8 @@ if [ $exit_val -eq 0 ];then
 else
 	echo "$(date +%'F %H:%M:%S') $(hostname) $EYOU_DISK_XT 磁盘数据 写入失败. 等待再次执行结果. 第一次." | $HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF
 	#lgp_add seek=b
-	#if dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 >/dev/null 2>&1;then exit_val=$? ;else echo "$(date +%'F %H:%M:%S') $(hostname) $EYOU_DISK_XT 磁盘数据写入失败.停止所
-有服务. 第二次."|$HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF;exit 1;fi
-	if dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 seek=b >/dev/null 2>&1;then exit_val=$? ;else echo "$(date +%'F %H:%M:%S') $(hostname) $EYOU_DISK_XT 磁盘数据写入失败.
-停止所有服务. 第二次."|$HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF;exit 1;fi
+	#if dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 >/dev/null 2>&1;then exit_val=$? ;else echo "$(date +%'F %H:%M:%S') $(hostname) $EYOU_DISK_XT 磁盘数据写入失败.停止所有服务. 第二次."|$HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF;exit 1;fi
+	if dd if=${EYOU_CHECK_DISK_XT} of=${EYOU_DISK_XT} bs=1K count=1024 seek=b >/dev/null 2>&1;then exit_val=$? ;else echo "$(date +%'F %H:%M:%S') $(hostname) $EYOU_DISK_XT 磁盘数据写入失败.停止所有服务. 第二次."|$HA_MESSAGE ERR DISK $CHECK_DISK_SCAN_CONF;exit 1;fi
 fi
 }
 
