@@ -4,6 +4,7 @@
 <div>modfiy 2014 12 30</div>
 <div>by: liguopeng@eyou.net &nbsp;mailbad@163.com</div>
 <div><br></div>
+<div>&nbsp;修复san存储模式下的心跳磁盘 uuid 识别。2015-06-05</div><br>
 <div>更新版本 &nbsp;仅限 update version corosync 1.4.7 pacemaker 1.1.12 crmsh 2.1</div><br>
 <div>架构图</div><br>
 <div><img src="https://github.com/mailbad/eyou_ha/blob/master/init/ha.png"></div>
